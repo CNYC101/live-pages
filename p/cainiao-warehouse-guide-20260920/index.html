@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8" />
-<meta name="robots" content="noindex,nofollow">
+<meta name="robots" content="noindex,nofollow" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>菜鸟云仓 · 商家全流程操作指南（骨架样稿 v1）</title>
 <style>
@@ -105,6 +105,17 @@
   .shot.filled{border-style:solid;border-color:var(--line);background:#fff}
   .shot.filled img{width:100%;height:100%;object-fit:cover;border-radius:10px}
 
+  /* 真实截图画廊（点击放大） */
+  .gal-cap{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink-3);font-weight:600;margin:16px 0 2px}
+  .gal-cap .z{color:var(--brand)}
+  .gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:8px}
+  .gal .th{position:relative;border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden;cursor:zoom-in;transition:.15s;aspect-ratio:16/10}
+  .gal .th:hover{border-color:var(--brand);box-shadow:var(--shadow-h);transform:translateY(-2px)}
+  .gal .th img{width:100%;height:100%;object-fit:contain;display:block;background:#f7f9ff}
+  .gal .th .n{position:absolute;left:8px;top:8px;background:rgba(29,33,41,.72);color:#fff;font-size:11px;font-weight:700;border-radius:6px;padding:1px 7px}
+  .gal .th .mag{position:absolute;right:8px;bottom:8px;background:rgba(30,111,255,.9);color:#fff;font-size:11px;font-weight:600;border-radius:20px;padding:2px 9px;opacity:0;transition:.15s}
+  .gal .th:hover .mag{opacity:1}
+
   .tip{display:flex;gap:10px;background:#f2f7ff;border:1px solid #d7e6ff;border-radius:12px;padding:12px 15px;margin:14px 0;font-size:13px;color:#274a86}
   .tip .e{font-size:17px}
   .tip.warn{background:#fff6f0;border-color:#ffd9c2;color:#8a4718}
@@ -127,6 +138,10 @@
   .lb img{max-width:92vw;max-height:86vh;border-radius:10px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
   .lb .cap{color:#dfe7f5;margin-top:12px;font-size:13px;text-align:center}
   .lb .x{position:absolute;top:20px;right:26px;color:#fff;font-size:30px;cursor:pointer;line-height:1}
+  .lb .nav{position:absolute;top:50%;transform:translateY(-50%);color:#fff;font-size:46px;cursor:pointer;line-height:1;user-select:none;padding:6px 16px;border-radius:12px;background:rgba(255,255,255,.08)}
+  .lb .nav:hover{background:rgba(255,255,255,.2)}
+  .lb .nav.prev{left:14px}
+  .lb .nav.next{right:14px}
 
   footer{max-width:var(--maxw);margin:0 auto;padding:24px;color:var(--ink-3);font-size:12.5px;text-align:center}
 
@@ -164,7 +179,7 @@
 
 <footer>菜鸟云仓 · 商家操作指南 —— 本页为结构骨架样稿（v1）。模块顺序、4 阶段总览、冻结目录、步骤互链确认后，再逐页抓取真实正文与截图填充。主色/Logo 均为占位。</footer>
 
-<div class="lb" id="lb"><span class="x" onclick="closeLB()">×</span><div><img id="lbImg" alt=""/><div class="cap" id="lbCap"></div></div></div>
+<div class="lb" id="lb"><span class="x" onclick="closeLB()">×</span><span class="nav prev" onclick="lbStep(-1)">‹</span><div><img id="lbImg" alt=""/><div class="cap" id="lbCap"></div></div><span class="nav next" onclick="lbStep(1)">›</span></div>
 
 <script>
 /* ================= 4 阶段（第一次入仓动线） ================= */
@@ -259,6 +274,26 @@ const FAQ = [
   {q:'货品没有自带条码怎么办？',a:'在小程序或 PC 录入货品时选【实物不带条码】，系统会自动生成一串条码供使用。'},
 ];
 
+/* ================= 截图资源（模块 id -> 图片路径，相对本 HTML 的 assets/） ================= */
+const IMAGES={
+  "m1":["assets/m1_1.jpg","assets/m1_2.jpg","assets/m1_3.jpg","assets/m1_4.jpg","assets/m1_5.jpg","assets/m1_6.jpg"],
+  "m2":["assets/m2_1.jpg","assets/m2_2.jpg","assets/m2_3.jpg","assets/m2_4.jpg","assets/m2_5.jpg","assets/m2_6.jpg","assets/m2_7.jpg"],
+  "m3":["assets/m3_1.jpg","assets/m3_2.jpg","assets/m3_3.jpg","assets/m3_4.jpg","assets/m3_5.jpg","assets/m3_6.jpg","assets/m3_7.jpg","assets/m3_8.jpg","assets/m3_9.jpg","assets/m3_10.jpg","assets/m3_11.jpg","assets/m3_12.jpg","assets/m3_13.jpg","assets/m3_14.jpg","assets/m3_15.jpg","assets/m3_16.jpg","assets/m3_17.jpg"],
+  "m4":["assets/m4_1.jpg","assets/m4_2.jpg","assets/m4_3.jpg","assets/m4_4.jpg","assets/m4_5.jpg","assets/m4_6.jpg","assets/m4_7.jpg","assets/m4_8.jpg","assets/m4_9.jpg","assets/m4_10.jpg","assets/m4_11.jpg","assets/m4_12.jpg","assets/m4_13.jpg","assets/m4_14.jpg","assets/m4_15.jpg","assets/m4_16.jpg","assets/m4_17.jpg","assets/m4_18.jpg","assets/m4_19.jpg","assets/m4_20.jpg","assets/m4_21.jpg","assets/m4_22.jpg","assets/m4_23.jpg"],
+  "m5":["assets/m5_1.jpg","assets/m5_2.jpg","assets/m5_3.jpg","assets/m5_4.jpg","assets/m5_5.jpg","assets/m5_6.jpg","assets/m5_7.jpg","assets/m5_8.jpg","assets/m5_9.jpg","assets/m5_10.jpg","assets/m5_11.jpg","assets/m5_12.jpg","assets/m5_13.jpg","assets/m5_14.jpg","assets/m5_15.jpg"],
+  "m7":["assets/m7_1.jpg","assets/m7_2.jpg","assets/m7_3.jpg","assets/m7_4.jpg","assets/m7_5.jpg","assets/m7_6.jpg","assets/m7_7.jpg","assets/m7_8.jpg"],
+  "m8":["assets/m8_1.jpg","assets/m8_2.jpg","assets/m8_3.jpg","assets/m8_4.jpg","assets/m8_5.jpg","assets/m8_6.jpg","assets/m8_7.jpg"],
+  "m9":["assets/m9_1.jpg","assets/m9_2.jpg","assets/m9_3.jpg","assets/m9_4.jpg","assets/m9_5.jpg"],
+  "m10":["assets/m10_1.jpg","assets/m10_2.jpg","assets/m10_3.jpg","assets/m10_4.jpg","assets/m10_5.jpg","assets/m10_6.jpg","assets/m10_7.jpg","assets/m10_8.jpg"],
+  "s1":["assets/s1_1.jpg","assets/s1_2.jpg","assets/s1_3.jpg"],
+  "s3":["assets/s3_1.jpg","assets/s3_2.jpg","assets/s3_3.jpg","assets/s3_4.jpg","assets/s3_5.jpg"],
+  "s4":["assets/s4_1.jpg","assets/s4_2.jpg"],
+  "s5":["assets/s5_1.jpg","assets/s5_2.jpg","assets/s5_3.jpg","assets/s5_4.jpg"],
+  "s6":["assets/s6_1.jpg","assets/s6_2.jpg","assets/s6_3.jpg"],
+  "s7":["assets/s7_1.jpg","assets/s7_2.jpg"],
+  "s8":["assets/s8_1.jpg","assets/s8_2.jpg","assets/s8_3.jpg"]
+};
+
 /* ================= 渲染 ================= */
 let curTab='pc';
 const $=s=>document.querySelector(s);
@@ -271,19 +306,26 @@ function stepHTML(m,s,i){
   else if(s.todo) chip=`<span class="chip chip-todo">正文待补</span>`;
   const desc=Array.isArray(s.d)?`<ul>${s.d.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:esc(s.d||'');
   const rels=(s.rel&&s.rel.length)?`<div class="rels"><span class="rl-lbl">🔗 相关步骤：</span>${s.rel.map(r=>`<span class="rel" onclick="goto('${r.tab||curTab}','${r.to}')">${esc(r.label)} ›</span>`).join('')}</div>`:'';
-  const shots=s.pc?'':`<div class="imgs">
-      <div class="shot"><div><div class="ic">📷</div><div class="cap">截图待补 · 进入页面</div><div class="hint">你下载后放这里，可点放大</div></div></div>
-      <div class="shot"><div><div class="ic">📷</div><div class="cap">截图待补 · 操作界面</div><div class="hint">建议 16:10，宽≥1200px</div></div></div>
-    </div>`;
   return `<div class="step" id="${m.id}-${i}">
     <div class="step-h"><span class="step-n">步骤 ${i+1}</span><h4 class="step-t">${esc(s.t)}</h4>${chip}</div>
-    <div class="step-d">${desc}</div>${rels}${shots}</div>`;
+    <div class="step-d">${desc}</div>${rels}</div>`;
+}
+function galleryHTML(m){
+  const list=IMAGES[m.id];
+  if(!list||!list.length) return '';
+  const n=list.length;
+  const thumbs=list.map((src,i)=>{
+    const cap=`${m.title} · 图示 ${i+1}/${n}`;
+    return `<div class="th" data-cap="${esc(cap)}"><img src="${src}" alt="${esc(cap)}" loading="lazy" onerror="this.closest('.th').style.display='none'"><span class="n">${i+1}/${n}</span><span class="mag">🔍 点击放大</span></div>`;
+  }).join('');
+  return `<div class="gal-cap">📷 操作截图（共 ${n} 张，<span class="z">点击可放大</span>）</div><div class="gal">${thumbs}</div>`;
 }
 function moduleHTML(m){
   return `<section class="mod" id="${m.id}">
     <div class="mod-h"><div class="mod-ic">${m.ic}</div><div><div class="kicker">${stg(m.stage).name}</div><h2>${m.title}</h2></div></div>
     <div class="mod-desc">${esc(m.desc)}</div>
     ${m.steps.map((s,i)=>stepHTML(m,s,i)).join('')}
+    ${galleryHTML(m)}
   </section>`;
 }
 function stagebarHTML(){
@@ -361,9 +403,29 @@ let ticking=false;
 window.addEventListener('scroll',()=>{if(!ticking){requestAnimationFrame(()=>{spy();ticking=false;});ticking=true;}});
 
 /* lightbox */
-function openLB(el){const img=el.querySelector('img');if(!img)return;$('#lbImg').src=img.src;$('#lbCap').textContent=el.querySelector('.cap')?.textContent||'';$('#lb').classList.add('show');}
+let lbGroup=[],lbIdx=0;
+function openLB(el){
+  const img=el.querySelector('img');if(!img)return;
+  $('#lbImg').src=img.src;
+  $('#lbCap').textContent=el.dataset.cap||(el.querySelector('.cap')?.textContent||'');
+  const gal=el.closest('.gal');
+  if(gal){lbGroup=[...gal.querySelectorAll('.th')];lbIdx=lbGroup.indexOf(el);}
+  else{lbGroup=[];lbIdx=0;}
+  $('#lb').classList.add('show');
+}
+function lbStep(d){if(!lbGroup.length)return;lbIdx=(lbIdx+d+lbGroup.length)%lbGroup.length;openLB(lbGroup[lbIdx]);}
 function closeLB(){$('#lb').classList.remove('show');}
-document.addEventListener('click',e=>{const s=e.target.closest('.shot');if(s)openLB(s);if(e.target.id==='lb'||e.target.className==='x')closeLB();});
+document.addEventListener('click',e=>{
+  const t=e.target.closest('.gal .th')||e.target.closest('.shot');
+  if(t){openLB(t);return;}
+  if(e.target.id==='lb'||e.target.classList.contains('x'))closeLB();
+});
+document.addEventListener('keydown',e=>{
+  if(!$('#lb').classList.contains('show'))return;
+  if(e.key==='Escape')closeLB();
+  else if(e.key==='ArrowRight')lbStep(1);
+  else if(e.key==='ArrowLeft')lbStep(-1);
+});
 
 /* init */
 renderTabs(); renderFlow('pc'); renderFlow('mp'); renderFAQ();
