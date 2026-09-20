@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>菜鸟云仓 · 商家全流程操作指南（骨架样稿 v1）</title>
+<style>
+  :root{
+    --brand:#1E6FFF; --brand-d:#0B4FD1; --accent:#00C2A8; --warn:#FF7A45;
+    --bg:#F5F7FB; --card:#FFFFFF; --ink:#1D2129; --ink-2:#4E5969; --ink-3:#86909C;
+    --line:#E5E9F0; --chip:#EEF3FF; --radius:16px;
+    --shadow:0 6px 24px rgba(20,40,80,.06); --shadow-h:0 10px 34px rgba(20,40,80,.12);
+    --hh:66px;   /* header height */
+    --sh:70px;   /* stage bar height */
+    --maxw:1200px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased;
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  a{color:var(--brand);text-decoration:none}
+
+  /* header */
+  header.site{position:sticky;top:0;z-index:60;background:rgba(255,255,255,.9);backdrop-filter:saturate(160%) blur(10px);border-bottom:1px solid var(--line)}
+  .site-in{max-width:var(--maxw);margin:0 auto;padding:13px 24px;display:flex;align-items:center;gap:14px;height:var(--hh)}
+  .logo{width:40px;height:40px;flex:0 0 40px;border-radius:12px;background:linear-gradient(135deg,var(--brand),var(--accent));display:grid;place-items:center;color:#fff;font-weight:800;box-shadow:var(--shadow)}
+  .site-title{font-size:18px;font-weight:800;letter-spacing:.4px}
+  .site-sub{font-size:12px;color:var(--ink-3);margin-top:-2px}
+  .badge{margin-left:auto;font-size:12px;color:var(--brand);background:var(--chip);border:1px solid #d7e3ff;padding:5px 12px;border-radius:20px;font-weight:600}
+  .draft-flag{font-size:12px;color:#9a6b00;background:#fff5db;border:1px solid #ffe1a6;padding:5px 12px;border-radius:20px;font-weight:600;margin-left:10px}
+
+  /* top tabs */
+  .tabs{max-width:var(--maxw);margin:0 auto;padding:16px 24px 0;display:flex;gap:8px;flex-wrap:wrap}
+  .tab-btn{appearance:none;border:1px solid var(--line);background:var(--card);color:var(--ink-2);padding:11px 20px;border-radius:12px 12px 0 0;font-size:15px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;border-bottom:none;position:relative}
+  .tab-btn:hover{color:var(--brand)}
+  .tab-btn.active{color:var(--brand);border-color:#cfe0ff}
+  .tab-btn.active::after{content:"";position:absolute;left:14px;right:14px;bottom:-1px;height:3px;background:var(--brand);border-radius:3px}
+
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px 60px}
+  .panel{display:none;background:var(--card);border:1px solid var(--line);border-radius:0 var(--radius) var(--radius) var(--radius);box-shadow:var(--shadow)}
+  .panel.active{display:block}
+
+  /* sticky stage overview bar (frozen) */
+  .stagebar{position:sticky;top:var(--hh);z-index:40;background:var(--card);border-bottom:1px solid var(--line);padding:12px 22px;min-height:var(--sh);display:flex;align-items:center;gap:10px;overflow-x:auto}
+  .stagebar .lbl{font-size:12px;color:var(--ink-3);font-weight:700;flex:0 0 auto;letter-spacing:.5px}
+  .stage-pill{flex:1 0 auto;display:flex;align-items:center;gap:10px;min-width:170px;border:1px solid var(--line);border-radius:12px;padding:8px 12px;cursor:pointer;transition:.15s;background:#fff;position:relative}
+  .stage-pill:hover{border-color:var(--brand);box-shadow:var(--shadow)}
+  .stage-pill .ic{font-size:22px;line-height:1}
+  .stage-pill .st{font-size:14px;font-weight:800}
+  .stage-pill .sd{font-size:11px;color:var(--ink-3)}
+  .stage-pill .idx{position:absolute;top:-8px;left:-8px;width:22px;height:22px;border-radius:50%;background:var(--brand);color:#fff;font-size:12px;font-weight:800;display:grid;place-items:center;box-shadow:var(--shadow)}
+  .stage-pill.active{background:linear-gradient(180deg,#f2f7ff,#e9f1ff);border-color:var(--brand)}
+  .stage-sep{display:flex;align-items:center;color:#c4d0e8;font-size:20px;font-weight:800;flex:0 0 auto}
+  .stage-sep:last-of-type{display:none}
+
+  /* layout: toc + content */
+  .layout{display:grid;grid-template-columns:250px 1fr}
+  nav.toc{border-right:1px solid var(--line);padding:18px 12px;position:sticky;top:calc(var(--hh) + var(--sh));align-self:start;max-height:calc(100vh - var(--hh) - var(--sh) - 20px);overflow:auto}
+  nav.toc .grp-h{font-size:12px;color:var(--brand);font-weight:800;padding:12px 10px 4px;display:flex;align-items:center;gap:6px}
+  nav.toc .grp-h .dot{width:6px;height:6px;border-radius:50%;background:var(--brand)}
+  nav.toc a{display:block;font-size:13.3px;color:var(--ink-2);padding:7px 10px 7px 16px;border-radius:9px;line-height:1.4;border-left:2px solid transparent}
+  nav.toc a:hover{background:#f3f6fc;color:var(--brand)}
+  nav.toc a.active{background:#eef4ff;color:var(--brand);font-weight:700;border-left-color:var(--brand)}
+  nav.toc a .pc-tag{color:var(--warn);font-weight:700;font-size:11px}
+
+  main.body{padding:24px 30px 40px;min-width:0}
+  .stage-head{display:flex;align-items:center;gap:12px;margin:6px 0 14px;padding:14px 16px;background:linear-gradient(90deg,#eef4ff,#f7faff);border:1px solid #e0ebff;border-radius:12px;scroll-margin-top:calc(var(--hh) + var(--sh) + 12px)}
+  .stage-head .sh-ic{width:40px;height:40px;border-radius:11px;background:#fff;display:grid;place-items:center;font-size:22px;box-shadow:var(--shadow)}
+  .stage-head .sh-t{font-size:18px;font-weight:800}
+  .stage-head .sh-s{font-size:12.5px;color:var(--ink-3)}
+  .stage-head:not(:first-child){margin-top:34px}
+
+  section.mod{padding-bottom:14px;margin:8px 0 6px;scroll-margin-top:calc(var(--hh) + var(--sh) + 12px)}
+  .mod-h{display:flex;align-items:center;gap:12px;margin:2px 0 4px}
+  .mod-ic{width:38px;height:38px;flex:0 0 38px;border-radius:11px;background:var(--chip);display:grid;place-items:center;font-size:20px}
+  .mod-h h2{font-size:18px;margin:0;font-weight:800}
+  .mod-h .kicker{font-size:11.5px;color:var(--ink-3);font-weight:600}
+  .mod-desc{font-size:13.5px;color:var(--ink-2);margin:4px 0 10px}
+
+  .step{border:1px solid var(--line);border-radius:12px;padding:15px 17px;margin:11px 0;background:#fff;transition:.15s}
+  .step:hover{box-shadow:var(--shadow)}
+  .step-h{display:flex;align-items:flex-start;gap:10px}
+  .step-n{font-size:12px;font-weight:800;color:var(--brand);background:var(--chip);border-radius:8px;padding:3px 9px;white-space:nowrap}
+  .step-t{font-size:15px;font-weight:700;margin:0}
+  .step-d{font-size:13.5px;color:var(--ink-2);margin:8px 0 0}
+  .step-d ul{margin:6px 0 0;padding-left:20px}
+  .step-d li{margin:3px 0}
+
+  .chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;border-radius:20px;padding:4px 11px;margin-left:auto;white-space:nowrap}
+  .chip-pc{color:#fff;background:var(--warn);cursor:pointer}
+  .chip-pc:hover{filter:brightness(.94)}
+  .chip-todo{color:#7a5a00;background:#fff3d1}
+  .rels{margin-top:10px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .rels .rl-lbl{font-size:12px;color:var(--ink-3)}
+  .rel{font-size:12.5px;color:var(--brand);background:#f0f5ff;border:1px solid #d7e3ff;border-radius:20px;padding:3px 11px;cursor:pointer}
+  .rel:hover{background:#e2ecff}
+
+  .imgs{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}
+  .shot{width:calc(50% - 6px);min-width:220px;aspect-ratio:16/10;border:1.5px dashed #c6d3ec;border-radius:12px;background:repeating-linear-gradient(45deg,#f7f9ff,#f7f9ff 12px,#f1f5ff 12px,#f1f5ff 24px);display:grid;place-items:center;text-align:center;color:var(--ink-3);cursor:zoom-in;transition:.15s;padding:10px}
+  .shot:hover{border-color:var(--brand);color:var(--brand)}
+  .shot .ic{font-size:26px}
+  .shot .cap{font-size:12px;margin-top:6px;font-weight:600}
+  .shot .hint{font-size:11px;color:#aeb8cc}
+  .shot.filled{border-style:solid;border-color:var(--line);background:#fff}
+  .shot.filled img{width:100%;height:100%;object-fit:cover;border-radius:10px}
+
+  .tip{display:flex;gap:10px;background:#f2f7ff;border:1px solid #d7e6ff;border-radius:12px;padding:12px 15px;margin:14px 0;font-size:13px;color:#274a86}
+  .tip .e{font-size:17px}
+  .tip.warn{background:#fff6f0;border-color:#ffd9c2;color:#8a4718}
+
+  /* FAQ */
+  .faq{padding:24px 30px 40px}
+  .faq-h{font-size:18px;font-weight:800;display:flex;align-items:center;gap:8px;margin-bottom:6px}
+  .faq-h .bar{width:4px;height:18px;background:var(--brand);border-radius:2px}
+  .faq-item{border:1px solid var(--line);border-radius:12px;margin:10px 0;overflow:hidden;background:#fff}
+  .faq-q{width:100%;text-align:left;appearance:none;border:none;background:none;padding:14px 18px;font-size:15px;font-weight:700;cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:var(--ink)}
+  .faq-q:hover{color:var(--brand)}
+  .faq-q .arw{transition:.2s;color:var(--ink-3)}
+  .faq-a{display:none;padding:0 18px 16px;color:var(--ink-2);font-size:14px}
+  .faq-item.open .faq-a{display:block}
+  .faq-item.open .faq-q .arw{transform:rotate(180deg);color:var(--brand)}
+
+  /* lightbox */
+  .lb{position:fixed;inset:0;background:rgba(10,20,40,.82);display:none;place-items:center;z-index:100;padding:24px}
+  .lb.show{display:grid}
+  .lb img{max-width:92vw;max-height:86vh;border-radius:10px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+  .lb .cap{color:#dfe7f5;margin-top:12px;font-size:13px;text-align:center}
+  .lb .x{position:absolute;top:20px;right:26px;color:#fff;font-size:30px;cursor:pointer;line-height:1}
+
+  footer{max-width:var(--maxw);margin:0 auto;padding:24px;color:var(--ink-3);font-size:12.5px;text-align:center}
+
+  @media (max-width:820px){
+    :root{--sh:62px}
+    .layout{grid-template-columns:1fr}
+    nav.toc{position:static;max-height:none;border-right:none;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:6px}
+    nav.toc .grp-h{width:100%;padding:6px 8px}
+    nav.toc a{padding:6px 10px;background:#f3f6fc;border-radius:20px;border-left:none}
+    .shot{width:100%}
+  }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="site-in">
+    <div class="logo" title="菜小鸟 logo（待替换为官方图标）">鸟</div>
+    <div>
+      <div class="site-title">菜鸟云仓 · 商家全流程操作指南</div>
+      <div class="site-sub">从注册到发货对账，一步一图跟着做</div>
+    </div>
+    <div class="badge">骨架样稿 v1</div>
+    <div class="draft-flag">结构/视觉待确认</div>
+  </div>
+</header>
+
+<div class="tabs" id="tabs"></div>
+
+<div class="wrap">
+  <div id="panel-pc" class="panel active"></div>
+  <div id="panel-mp" class="panel"></div>
+  <div id="panel-faq" class="panel"></div>
+</div>
+
+<footer>菜鸟云仓 · 商家操作指南 —— 本页为结构骨架样稿（v1）。模块顺序、4 阶段总览、冻结目录、步骤互链确认后，再逐页抓取真实正文与截图填充。主色/Logo 均为占位。</footer>
+
+<div class="lb" id="lb"><span class="x" onclick="closeLB()">×</span><div><img id="lbImg" alt=""/><div class="cap" id="lbCap"></div></div></div>
+
+<script>
+/* ================= 4 阶段（第一次入仓动线） ================= */
+const STAGES = [
+  {id:'st1', ic:'🔑', name:'注册签约',      sub:'开账号 · 签合同'},
+  {id:'st2', ic:'🔌', name:'ERP 对接',      sub:'店铺授权 · 商货品绑定'},
+  {id:'st3', ic:'📥', name:'备货入仓',      sub:'建入库单 · 寄送到仓'},
+  {id:'st4', ic:'🚀', name:'发货',          sub:'订单推送 · 账单开票 · 售后'},
+];
+
+/* ================= 数据：PC / 小程序，各自模块挂到 4 阶段 ================= */
+/* step: t 标题 | d 说明(数组/字符串) | pc+pcTarget 需转PC | rel 互链[{to,label,tab?}] | todo 正文待补 */
+const GUIDE = {
+  pc:{
+    modules:[
+      {id:'m1',stage:'st1',ic:'🔑',title:'注册与登录',desc:'企业主账号登录 + 创建子账号。',steps:[
+        {t:'注册 / 登录云仓后台',d:['用主账号注册手机号登录 CNBP 后台。','已有菜鸟账号可直接登录；也可淘宝账号授权登录。'],todo:1},
+        {t:'创建子账号',d:['在「账号管理」新建子账号，按货品/订单/账单分配权限。'],todo:1,rel:[{to:'s2',label:'小程序·子账号登录',tab:'mp'}]},
+      ]},
+      {id:'m2',stage:'st1',ic:'📝',title:'商家签约',desc:'对应源手册 1.0 商家签约流程。',steps:[
+        {t:'填写入驻 / 签约信息',d:['完善企业主体、联系人、业务信息。'],todo:1},
+        {t:'签署合同 · 开通代扣 · 确认订购',d:['等待小二备合同 → 签署 → 开通支付宝代扣 → 确认订购 → 审核通过。'],todo:1,rel:[{to:'m3',label:'店铺授权'}]},
+      ]},
+      {id:'m3',stage:'st2',ic:'🏬',title:'店铺授权',desc:'对应源手册 2.0 店铺授权。',steps:[
+        {t:'授权销售渠道',d:['把淘宝/天猫/拼多多/抖音等店铺授权给云仓，用于订单自动拉取。'],todo:1,rel:[{to:'m4',label:'商货品绑定'}]},
+      ]},
+      {id:'m4',stage:'st2',ic:'📦',title:'商货品管理 · 绑定',desc:'对应 3.0：建品、条码、与商品绑定。',steps:[
+        {t:'录入货品信息',d:['维护货品图片、名称、规格；无条码可选系统自动生成。'],todo:1},
+        {t:'打印条码 / 批量上传',d:['批量导入货品、打印实物条码标签（PC 专属能力）。'],todo:1},
+        {t:'商货品绑定',d:['把线上商品 SKU 与仓库货品建立绑定关系。'],todo:1,rel:[{to:'m3',label:'店铺授权'},{to:'m5',label:'建入库单'}]},
+      ]},
+      {id:'m5',stage:'st3',ic:'🗒️',title:'建入库单',desc:'对应 4.0 备货入库（创建入库单）。',steps:[
+        {t:'新建入库单',d:['选择货品、填写箱数、选择自送/物流方式。'],todo:1,rel:[{to:'m4',label:'商货品绑定'}]},
+        {t:'打印箱唛',d:['生成并打印箱唛，随货寄到仓。'],todo:1},
+      ]},
+      {id:'m6',stage:'st3',ic:'🚚',title:'货品寄送到仓',desc:'备货在途与到仓收货。',steps:[
+        {t:'寄货到指定仓',d:['按入库单把货寄到对应云仓，仓库收货清点后上架。'],todo:1,rel:[{to:'m7',label:'订单推送到仓'}]},
+      ]},
+      {id:'m7',stage:'st4',ic:'🛒',title:'订单推送到仓',desc:'对应 5.0 推单发货。',steps:[
+        {t:'订单审核 / 推送',d:['查看待处理、异常单（缺货/未绑定），审核通过后推送到仓发货。'],todo:1,rel:[{to:'m4',label:'商货品绑定'},{to:'m6',label:'寄送到仓'}]},
+        {t:'发货与物流跟踪',d:['仓库出库后跟踪包裹状态。'],todo:1,rel:[{to:'m8',label:'查看账单与开票'}]},
+      ]},
+      {id:'m8',stage:'st4',ic:'🧾',title:'查看账单与开票',desc:'对应 7.0 结算账单。',steps:[
+        {t:'查看账单',d:['按月查看仓储、配送、增值等服务费用明细。'],todo:1},
+        {t:'开发票',d:['发起开票申请，填写抬头并下载发票。'],todo:1,rel:[{to:'s7',label:'小程序·查看账单',tab:'mp'}]},
+      ]},
+      {id:'m9',stage:'st4',ic:'✨',title:'增值服务',desc:'对应 6.0 增值服务。',steps:[
+        {t:'发起增值服务',d:['贴标、组套、拆箱等增值服务下单与跟踪。'],todo:1},
+      ]},
+      {id:'m10',stage:'st4',ic:'↩️',title:'售后 · 退供出库',desc:'对应 8.0 退供出库单。',steps:[
+        {t:'退供出库',d:['逆向退货、退供出库单的创建与处理。'],todo:1},
+      ]},
+    ]
+  },
+  mp:{
+    modules:[
+      {id:'s1',stage:'st1',ic:'🔑',title:'登录小程序',desc:'手机端第一步。',steps:[
+        {t:'进入并登录小程序',d:['首页飘条 / 「我的」进入；快捷登录自动取本机手机号，也可其他手机号验证码登录。','⚠️ 请使用主账号注册的手机号登录。'],rel:[{to:'s2',label:'子账号登录'}]},
+      ]},
+      {id:'s2',stage:'st1',ic:'👥',title:'子账号登录',desc:'团队成员用子账号登录。',steps:[
+        {t:'子账号登录操作',d:['（源文档为操作视频，待补截图/视频占位）'],todo:1},
+      ]},
+      {id:'s3',stage:'st2',ic:'📦',title:'货品管理',desc:'新建/编辑单个或组合货品。',steps:[
+        {t:'新增 / 编辑货品',d:['「我的-货品」或首页入库单直接新增。','维护图片、名称，点【识图】自动识别；无条码可选【实物不带条码】系统生成。'],rel:[{to:'s4',label:'商货品绑定'}]},
+        {t:'打印条码 / 批量上传',d:['这两项目前小程序暂不支持，需到 PC 端完成。'],pc:true,pcTarget:{tab:'pc',module:'m4'}},
+      ]},
+      {id:'s4',stage:'st2',ic:'🔗',title:'商货品绑定',desc:'「我的-商品」把商品与货品关联。',steps:[
+        {t:'绑定 / 打标',d:['绑定货品：关联仓库货品；打标：标记自发货（不入云仓的品）；标记虚拟品。'],rel:[{to:'s3',label:'货品管理'},{to:'s5',label:'入库操作'}]},
+      ]},
+      {id:'s5',stage:'st3',ic:'🗒️',title:'入库操作',desc:'首页新建入库单。',steps:[
+        {t:'新建入库单',d:['1) 选择/新建货品  2) 维护送货信息（自送/物流、箱数）  3) 打印箱唛 & 入库单。','已在 PC 建过的入库单，可在小程序改送货方式、补箱数后打印箱唛。'],rel:[{to:'s3',label:'货品管理'},{to:'m5',label:'PC·建入库单',tab:'pc'}]},
+      ]},
+      {id:'s6',stage:'st4',ic:'✅',title:'审核订单',desc:'下方菜单「订单」。',steps:[
+        {t:'查看并处理异常单',d:['处理缺货 / 未绑定货品等异常；支持手动审核。'],rel:[{to:'s4',label:'商货品绑定'}]},
+        {t:'编辑订单',d:['点击具体订单进行编辑。']},
+      ]},
+      {id:'s7',stage:'st4',ic:'🧾',title:'查看账单',desc:'首页「账单」。',steps:[
+        {t:'查看账单明细',d:['按月查看费用明细。'],pc:true,pcTarget:{tab:'pc',module:'m8'}},
+      ]},
+      {id:'s8',stage:'st4',ic:'🎧',title:'服务工单',desc:'首页「服务工单」。',steps:[
+        {t:'处理工单',d:['本期暂不能新建工单，但可对已有工单进行处理与跟进。']},
+      ]},
+    ]
+  }
+};
+
+const FAQ = [
+  {q:'入驻云仓需要准备哪些资料？',a:'（待补：营业执照、法人信息、支付宝账号等，确认后从源「常见问题」页填充）'},
+  {q:'小程序能做的和 PC 能做的有什么区别？',a:'查看/建品/绑定/入库/审单可在小程序；打印条码、批量上传、88 小仓查看账单等须转 PC。'},
+  {q:'订单一直显示异常 / 发不出去怎么办？',a:'（待补：常见异常如缺货、货品未绑定、地址异常等的处理）'},
+  {q:'账单什么时候出，怎么开发票？',a:'（待补：出账周期与开票入口）'},
+  {q:'货品没有自带条码怎么办？',a:'在小程序或 PC 录入货品时选【实物不带条码】，系统会自动生成一串条码供使用。'},
+];
+
+/* ================= 渲染 ================= */
+let curTab='pc';
+const $=s=>document.querySelector(s);
+function esc(t){return (t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function stg(id){return STAGES.find(s=>s.id===id);}
+
+function stepHTML(m,s,i){
+  let chip='';
+  if(s.pc) chip=`<span class="chip chip-pc" onclick="goto('${s.pcTarget.tab}','${s.pcTarget.module}')">⚠️ 需在 PC 端完成 ›</span>`;
+  else if(s.todo) chip=`<span class="chip chip-todo">正文待补</span>`;
+  const desc=Array.isArray(s.d)?`<ul>${s.d.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:esc(s.d||'');
+  const rels=(s.rel&&s.rel.length)?`<div class="rels"><span class="rl-lbl">🔗 相关步骤：</span>${s.rel.map(r=>`<span class="rel" onclick="goto('${r.tab||curTab}','${r.to}')">${esc(r.label)} ›</span>`).join('')}</div>`:'';
+  const shots=s.pc?'':`<div class="imgs">
+      <div class="shot"><div><div class="ic">📷</div><div class="cap">截图待补 · 进入页面</div><div class="hint">你下载后放这里，可点放大</div></div></div>
+      <div class="shot"><div><div class="ic">📷</div><div class="cap">截图待补 · 操作界面</div><div class="hint">建议 16:10，宽≥1200px</div></div></div>
+    </div>`;
+  return `<div class="step" id="${m.id}-${i}">
+    <div class="step-h"><span class="step-n">步骤 ${i+1}</span><h4 class="step-t">${esc(s.t)}</h4>${chip}</div>
+    <div class="step-d">${desc}</div>${rels}${shots}</div>`;
+}
+function moduleHTML(m){
+  return `<section class="mod" id="${m.id}">
+    <div class="mod-h"><div class="mod-ic">${m.ic}</div><div><div class="kicker">${stg(m.stage).name}</div><h2>${m.title}</h2></div></div>
+    <div class="mod-desc">${esc(m.desc)}</div>
+    ${m.steps.map((s,i)=>stepHTML(m,s,i)).join('')}
+  </section>`;
+}
+function stagebarHTML(){
+  return `<div class="stagebar"><span class="lbl">第一次入仓动线 ›</span>${STAGES.map((s,i)=>
+    `<div class="stage-pill" data-stage="${s.id}" onclick="jumpStage('${s.id}')"><span class="idx">${i+1}</span><span class="ic">${s.ic}</span><span><div class="st">${s.name}</div><div class="sd">${s.sub}</div></span></div>`
+    +(i<STAGES.length-1?'<span class="stage-sep">›</span>':'')).join('')}</div>`;
+}
+function tocHTML(mods){
+  let h='';
+  STAGES.forEach(sg=>{
+    const inS=mods.filter(m=>m.stage===sg.id);
+    if(!inS.length) return;
+    h+=`<div class="grp-h"><span class="dot"></span>${sg.ic} ${sg.name}</div>`;
+    inS.forEach(m=>{
+      const hasPc=m.steps.some(x=>x.pc);
+      h+=`<a href="#${m.id}" data-toc="${m.id}">${m.title}${hasPc?' <span class="pc-tag">↗PC</span>':''}</a>`;
+    });
+  });
+  return h;
+}
+function renderFlow(tab){
+  const mods=GUIDE[tab].modules;
+  const callout = tab==='pc'?'':
+    `<div class="tip warn" style="margin:16px 30px 0"><span class="e">📌</span><div>小程序可完成大部分日常操作；<b>打印条码、批量上传、88 小仓查看账单</b>等仍需去 PC。看到橙色「需在 PC 端完成」标签，点一下即跳到 PC 版对应模块。</div></div>`;
+  let content='';
+  STAGES.forEach(sg=>{
+    const inS=mods.filter(m=>m.stage===sg.id);
+    if(!inS.length) return;
+    content+=`<div class="stage-head" id="${sg.id}"><div class="sh-ic">${sg.ic}</div><div><div class="sh-t">${sg.name}</div><div class="sh-s">${sg.sub}</div></div></div>`;
+    content+=inS.map(moduleHTML).join('');
+  });
+  $('#panel-'+tab).innerHTML = stagebarHTML()+callout+
+    `<div class="layout"><nav class="toc">${tocHTML(mods)}</nav><main class="body">${content}</main></div>`;
+  spy();
+}
+function renderFAQ(){
+  const items=FAQ.map((f,i)=>`<div class="faq-item" id="faq${i}"><button class="faq-q" onclick="document.getElementById('faq${i}').classList.toggle('open')">${esc(f.q)}<span class="arw">▾</span></button><div class="faq-a">${esc(f.a)}</div></div>`).join('');
+  $('#panel-faq').innerHTML=`<div class="faq"><div class="faq-h"><span class="bar"></span>常 见 问 题（PC / 小程序 通用）</div>
+    <div class="tip"><span class="e">💡</span><div>两端共享 FAQ，正文从源手册「菜鸟云仓常见问题」页抓取后填充。</div></div>${items}</div>`;
+}
+
+/* ================= 交互 ================= */
+function renderTabs(){
+  const tabs=[{id:'pc',ic:'🖥️',l:'PC 版操作指南'},{id:'mp',ic:'📱',l:'小程序版操作指南'},{id:'faq',ic:'❓',l:'常见问题'}];
+  $('#tabs').innerHTML=tabs.map(t=>`<button class="tab-btn ${t.id===curTab?'active':''}" data-tab="${t.id}"><span class="em">${t.ic}</span>${t.l}</button>`).join('');
+}
+function switchTab(name){
+  curTab=name; renderTabs();
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  $('#panel-'+name).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function jumpStage(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
+function goto(tab,mod){
+  if(tab!==curTab) switchTab(tab);
+  setTimeout(()=>{const el=document.getElementById(mod);if(!el)return;
+    el.style.transition='box-shadow .3s';el.style.boxShadow='0 0 0 3px rgba(255,122,69,.45)';
+    el.scrollIntoView({behavior:'smooth',block:'start'});
+    setTimeout(()=>el.style.boxShadow='',1500);},120);
+}
+$('#tabs').addEventListener('click',e=>{const b=e.target.closest('.tab-btn');if(b)switchTab(b.dataset.tab);});
+
+/* 滚动高亮：当前阶段 pill + 当前模块目录项（用 scroll 监听，打印安全，不用 IntersectionObserver） */
+function spy(){
+  const panel=document.querySelector('.panel.active'); if(!panel) return;
+  const hh=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--hh'))+parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sh'))+20;
+  let actStage=null,actMod=null;
+  panel.querySelectorAll('.stage-head').forEach(el=>{if(el.getBoundingClientRect().top<=hh)actStage=el.id;});
+  panel.querySelectorAll('section.mod').forEach(el=>{if(el.getBoundingClientRect().top<=hh)actMod=el.id;});
+  if(!actStage){const f=panel.querySelector('.stage-head');if(f)actStage=f.id;}
+  panel.querySelectorAll('.stage-pill').forEach(p=>p.classList.toggle('active',p.dataset.stage===actStage));
+  panel.querySelectorAll('[data-toc]').forEach(a=>a.classList.toggle('active',a.dataset.toc===actMod));
+}
+let ticking=false;
+window.addEventListener('scroll',()=>{if(!ticking){requestAnimationFrame(()=>{spy();ticking=false;});ticking=true;}});
+
+/* lightbox */
+function openLB(el){const img=el.querySelector('img');if(!img)return;$('#lbImg').src=img.src;$('#lbCap').textContent=el.querySelector('.cap')?.textContent||'';$('#lb').classList.add('show');}
+function closeLB(){$('#lb').classList.remove('show');}
+document.addEventListener('click',e=>{const s=e.target.closest('.shot');if(s)openLB(s);if(e.target.id==='lb'||e.target.className==='x')closeLB();});
+
+/* init */
+renderTabs(); renderFlow('pc'); renderFlow('mp'); renderFAQ();
+</script>
+</body>
+</html>
