@@ -2,9 +2,9 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8" />
-<meta name="robots" content="noindex,nofollow" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>菜鸟云仓 · 商家全流程操作指南（骨架样稿 v1）</title>
+<meta name="robots" content="noindex,nofollow" />
+<title>菜鸟云仓 · 商家全流程操作指南</title>
 <style>
   :root{
     --brand:#1E6FFF; --brand-d:#0B4FD1; --accent:#00C2A8; --warn:#FF7A45;
@@ -96,25 +96,18 @@
   .rel{font-size:12.5px;color:var(--brand);background:#f0f5ff;border:1px solid #d7e3ff;border-radius:20px;padding:3px 11px;cursor:pointer}
   .rel:hover{background:#e2ecff}
 
-  .imgs{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}
-  .shot{width:calc(50% - 6px);min-width:220px;aspect-ratio:16/10;border:1.5px dashed #c6d3ec;border-radius:12px;background:repeating-linear-gradient(45deg,#f7f9ff,#f7f9ff 12px,#f1f5ff 12px,#f1f5ff 24px);display:grid;place-items:center;text-align:center;color:var(--ink-3);cursor:zoom-in;transition:.15s;padding:10px}
-  .shot:hover{border-color:var(--brand);color:var(--brand)}
-  .shot .ic{font-size:26px}
-  .shot .cap{font-size:12px;margin-top:6px;font-weight:600}
-  .shot .hint{font-size:11px;color:#aeb8cc}
-  .shot.filled{border-style:solid;border-color:var(--line);background:#fff}
-  .shot.filled img{width:100%;height:100%;object-fit:cover;border-radius:10px}
-
-  /* 真实截图画廊（点击放大） */
+  /* 真实截图（点击放大） */
+  .th{position:relative;border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden;cursor:zoom-in;transition:.15s;aspect-ratio:16/10}
+  .th:hover{border-color:var(--brand);box-shadow:var(--shadow-h);transform:translateY(-2px)}
+  .th img{width:100%;height:100%;object-fit:contain;display:block;background:#f7f9ff}
+  .th .n{position:absolute;left:8px;top:8px;background:rgba(29,33,41,.72);color:#fff;font-size:11px;font-weight:700;border-radius:6px;padding:1px 7px}
+  .th .mag{position:absolute;right:8px;bottom:8px;background:rgba(30,111,255,.9);color:#fff;font-size:11px;font-weight:600;border-radius:20px;padding:2px 9px;opacity:0;transition:.15s}
+  .th:hover .mag{opacity:1}
+  /* 截图直接跟在所属步骤文字下方 */
+  .step-imgs{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;margin-top:12px}
+  .gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:8px}
   .gal-cap{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink-3);font-weight:600;margin:16px 0 2px}
   .gal-cap .z{color:var(--brand)}
-  .gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:8px}
-  .gal .th{position:relative;border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden;cursor:zoom-in;transition:.15s;aspect-ratio:16/10}
-  .gal .th:hover{border-color:var(--brand);box-shadow:var(--shadow-h);transform:translateY(-2px)}
-  .gal .th img{width:100%;height:100%;object-fit:contain;display:block;background:#f7f9ff}
-  .gal .th .n{position:absolute;left:8px;top:8px;background:rgba(29,33,41,.72);color:#fff;font-size:11px;font-weight:700;border-radius:6px;padding:1px 7px}
-  .gal .th .mag{position:absolute;right:8px;bottom:8px;background:rgba(30,111,255,.9);color:#fff;font-size:11px;font-weight:600;border-radius:20px;padding:2px 9px;opacity:0;transition:.15s}
-  .gal .th:hover .mag{opacity:1}
 
   .tip{display:flex;gap:10px;background:#f2f7ff;border:1px solid #d7e6ff;border-radius:12px;padding:12px 15px;margin:14px 0;font-size:13px;color:#274a86}
   .tip .e{font-size:17px}
@@ -151,7 +144,7 @@
     nav.toc{position:static;max-height:none;border-right:none;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:6px}
     nav.toc .grp-h{width:100%;padding:6px 8px}
     nav.toc a{padding:6px 10px;background:#f3f6fc;border-radius:20px;border-left:none}
-    .shot{width:100%}
+    .step-imgs,.gal{grid-template-columns:1fr}
   }
 </style>
 </head>
@@ -164,8 +157,8 @@
       <div class="site-title">菜鸟云仓 · 商家全流程操作指南</div>
       <div class="site-sub">从注册到发货对账，一步一图跟着做</div>
     </div>
-    <div class="badge">骨架样稿 v1</div>
-    <div class="draft-flag">结构/视觉待确认</div>
+    <div class="badge">图文整合版 v2</div>
+    <div class="draft-flag">结构待确认</div>
   </div>
 </header>
 
@@ -177,7 +170,7 @@
   <div id="panel-faq" class="panel"></div>
 </div>
 
-<footer>菜鸟云仓 · 商家操作指南 —— 本页为结构骨架样稿（v1）。模块顺序、4 阶段总览、冻结目录、步骤互链确认后，再逐页抓取真实正文与截图填充。主色/Logo 均为占位。</footer>
+<footer>菜鸟云仓 · 商家操作指南 —— 正文与截图取自源操作手册，每个步骤的截图直接跟在对应文字下方，点击可放大。结构、主色与 Logo 待最终确认。</footer>
 
 <div class="lb" id="lb"><span class="x" onclick="closeLB()">×</span><span class="nav prev" onclick="lbStep(-1)">‹</span><div><img id="lbImg" alt=""/><div class="cap" id="lbCap"></div></div><span class="nav next" onclick="lbStep(1)">›</span></div>
 
@@ -190,91 +183,149 @@ const STAGES = [
   {id:'st4', ic:'🚀', name:'发货',          sub:'订单推送 · 账单开票 · 售后'},
 ];
 
-/* ================= 数据：PC / 小程序，各自模块挂到 4 阶段 ================= */
-/* step: t 标题 | d 说明(数组/字符串) | pc+pcTarget 需转PC | rel 互链[{to,label,tab?}] | todo 正文待补 */
+/* ================= 数据：PC / 小程序 ================= */
+/* step: t 标题 | d 说明(数组/字符串) | img 该步截图在源文档中的图序号 | pc+pcTarget 需转PC | rel 互链[{to,label,tab?}] | todo 正文待补 */
 const GUIDE = {
   pc:{
     modules:[
-      {id:'m1',stage:'st1',ic:'🔑',title:'注册与登录',desc:'企业主账号登录 + 创建子账号。',steps:[
-        {t:'注册 / 登录云仓后台',d:['用主账号注册手机号登录 CNBP 后台。','已有菜鸟账号可直接登录；也可淘宝账号授权登录。'],todo:1},
-        {t:'创建子账号',d:['在「账号管理」新建子账号，按货品/订单/账单分配权限。'],todo:1,rel:[{to:'s2',label:'小程序·子账号登录',tab:'mp'}]},
+      {id:'m1',stage:'st1',ic:'🔑',title:'登录与子账号',desc:'主账号登录 CNBP，并为团队创建角色与子账号。',steps:[
+        {t:'认识主账号与子账号',d:[
+          '商家入驻后，用店铺账号名和密码登录菜鸟系统，即"主账号"。',
+          '多位员工负责不同模块时，可设置"子账号"，独立登录、按职责分配权限，提高管理效率。',
+          '创建流程：CNBP 工作台 → 创建角色 → 新增子账号。']},
+        {t:'创建角色',d:[
+          '路径：CNBP 工作台 - 基础 - 账户权限 - 角色管理 - 可管理的角色。',
+          '步骤一：点击"新增角色"。',
+          '步骤二：填写业务域（菜鸟商家平台）、角色名（审单员 / 采购员 / 客服 / 会计等），按需选择权限。',
+          '注：必须勾选"通用基础权限"与"首页"，否则角色不生效。',
+          '步骤三：点击"确定"，角色添加成功。'],img:[1,2]},
+        {t:'新增子账号',d:[
+          '路径：CNBP 工作台 - 基础 - 账户权限 - 账号管理。',
+          '步骤一：点击"新建"。',
+          '步骤二：填写姓名、工号、手机号，点击"绑定"。',
+          '步骤三：点击该账号"角色"按钮，勾选所需角色并"确定"完成授权。',
+          '步骤四：点击"更多"→"激活"→"确定"完成激活；激活后即可用手机号登录工作台。'],img:[3,4,5,6],rel:[{to:'s2',label:'小程序·子账号登录',tab:'mp'}]},
       ]},
-      {id:'m2',stage:'st1',ic:'📝',title:'商家签约',desc:'对应源手册 1.0 商家签约流程。',steps:[
-        {t:'填写入驻 / 签约信息',d:['完善企业主体、联系人、业务信息。'],todo:1},
-        {t:'签署合同 · 开通代扣 · 确认订购',d:['等待小二备合同 → 签署 → 开通支付宝代扣 → 确认订购 → 审核通过。'],todo:1,rel:[{to:'m3',label:'店铺授权'}]},
+      {id:'m2',stage:'st1',ic:'📝',title:'商家签约',desc:'未使用外部 ERP 的商家，注册并签约菜鸟云仓的流程。',note:'若你已购买外部 ERP（旺店通、聚水潭、优易等）并需通过 ERP 管单，请走 ERP 系统对接流程。',noteWarn:1,steps:[
+        {t:'进入注册页',d:['注册页链接联系对接小二获取。','小程序可在微信内搜索"菜鸟云仓"。']},
+        {t:'选择登录方式',d:['支持淘宝快速登录，或其他方式登录。'],img:[1,2,3]},
+        {t:'菜鸟云仓签约',d:['如已有销售小二对接，填写对应小二名称；如无，选择"无"。'],img:[4,5,6]},
+        {t:'进入商家中心',d:['签约完毕后，根据页面弹出步骤继续操作。'],img:[7],rel:[{to:'m3',label:'店铺授权'}]},
       ]},
-      {id:'m3',stage:'st2',ic:'🏬',title:'店铺授权',desc:'对应源手册 2.0 店铺授权。',steps:[
-        {t:'授权销售渠道',d:['把淘宝/天猫/拼多多/抖音等店铺授权给云仓，用于订单自动拉取。'],todo:1,rel:[{to:'m4',label:'商货品绑定'}]},
+      {id:'m3',stage:'st2',ic:'🏬',title:'店铺授权',desc:'把各平台店铺授权给云仓，用于自动拉单（使用菜鸟 ERP 时）。',note:'仅在使用菜鸟 ERP 时需要；使用外部 ERP 的商家在自家 ERP 操作即可。',steps:[
+        {t:'创建店铺',d:['路径：进入店铺管理后点击"创建店铺"。','提示：拼多多暂不支持 CNBP 直接对接，需第三方系统推单或手工建单，可咨询对接小二。'],img:[1,2]},
+        {t:'授权店铺',d:['1688 店铺对接前可领 2000 元优惠券，领取后 0 元订购。'],img:[3,4]},
+        {t:'审核订购 · 进入拉单店铺',d:['淘宝 / 天猫、京东需审核后回到服务市场完成付款；抖音、快手、1688 直接登录对应店铺授权。'],img:[5,6,7,8,9,10]},
+        {t:'其他店铺 · 线上店铺管理',d:['电商平台以外的店铺，通过【其他平台】新建授权。','路径：基础 - 线上店铺管理。'],img:[11]},
+        {t:'新建店铺',d:['在【其他平台】点击"新建店铺"。'],img:[12]},
+        {t:'填写店铺信息并确定',d:[],img:[13]},
+        {t:'点击授权按钮',d:['点击授权按钮，跳转弹窗。'],img:[14]},
+        {t:'去购买 / 授权',d:['点击"去购买 / 授权"，跳转至对应平台店铺后台服务市场。'],img:[15]},
+        {t:'完成授权',d:['购买完成后再次点击授权 → 已购买 → 去授权，登录店铺主账号直接授权。'],img:[16]},
+        {t:'订购返还规则',d:['在服务市场购买对应服务（确认是你授权的那个店铺后台）。','金额返还请在首发后联系小二（钉钉服务群群主）提交信息，打款时效 1 个月。'],img:[17],rel:[{to:'m4',label:'商货品绑定'}]},
       ]},
-      {id:'m4',stage:'st2',ic:'📦',title:'商货品管理 · 绑定',desc:'对应 3.0：建品、条码、与商品绑定。',steps:[
-        {t:'录入货品信息',d:['维护货品图片、名称、规格；无条码可选系统自动生成。'],todo:1},
-        {t:'打印条码 / 批量上传',d:['批量导入货品、打印实物条码标签（PC 专属能力）。'],todo:1},
-        {t:'商货品绑定',d:['把线上商品 SKU 与仓库货品建立绑定关系。'],todo:1,rel:[{to:'m3',label:'店铺授权'},{to:'m5',label:'建入库单'}]},
+      {id:'m4',stage:'st2',ic:'📦',title:'商货品管理 · 绑定',desc:'建货品 / 组合品，把线上 SKU 与仓库货品绑定，并选择包装方案。',note:'使用菜鸟 ERP 时需要；外部 ERP 在自家系统操作。',steps:[
+        {t:'新增普通货品（Step1-4 必做）',d:['Step1 新增货品 → Step2 基本信息（按标注填，没框的不要填）→ Step3 物流信息 → Step4 条码管理（新增一行；无实物条码可由系统生成）。'],img:[1,2,3,4,5]},
+        {t:'新建组合货品',d:['先创建普通货品，再创建组合货品。','适用：单品按 A / B 入库，但售卖为 2A、2B 或 A+B 等组合 SKU 时；单链接单货品无需组合。'],img:[6,7,8,9,10]},
+        {t:'商货品绑定 · 平台商品',d:['在菜鸟仓发的品必做，绑定后才知道链接 SKU 发哪个货，绑错会发错。','路径：商货品菜单 - 平台商品。'],img:[11]},
+        {t:'关联 / 修改绑定',d:['未绑定显示"关联"，已绑定需换绑点"修改"；组合品链接要和创建的组合品绑定。'],img:[12,13]},
+        {t:'弹窗选择货品并确认',d:['在弹窗选择要绑定的货品，点击"确认"完成绑定。'],img:[14]},
+        {t:'进入货品包装方案',d:['路径：商货品 - 货品包装方案页面。'],img:[15]},
+        {t:'按货品选择包装方案',d:['每个货品都要选，不选默认推荐菜鸟纸箱并计费。'],img:[16,17]},
+        {t:'包装方案说明',d:['菜鸟包材共 6 种、商家自送到仓包材共 3 种、无需包装直接贴面单可选；只需选材质，无需选尺寸。'],img:[18,19,20,21]},
+        {t:'包材照片示意图',d:[],img:[22]},
+        {t:'经济仓报价',d:['具体费用见经济仓报价页面。'],img:[23],rel:[{to:'m5',label:'建入库单'}]},
       ]},
-      {id:'m5',stage:'st3',ic:'🗒️',title:'建入库单',desc:'对应 4.0 备货入库（创建入库单）。',steps:[
-        {t:'新建入库单',d:['选择货品、填写箱数、选择自送/物流方式。'],todo:1,rel:[{to:'m4',label:'商货品绑定'}]},
-        {t:'打印箱唛',d:['生成并打印箱唛，随货寄到仓。'],todo:1},
+      {id:'m5',stage:'st3',ic:'🗒️',title:'建入库单',desc:'维护供应商、创建入库单、预约送仓并打印箱唛。',note:'备货入库必须按入库规范：货品有条码（无则可自贴或仓代贴）、外箱有箱唛、SKU 物理隔离，否则仓库有权拒收 / 退回。',noteWarn:1,steps:[
+        {t:'维护供应商信息（首次）',d:['路径：基础信息 - 供应商信息 - 新建，填写信息后"确定"。'],img:[1,2]},
+        {t:'新建入库单',d:['路径：出入库 & 库内 - 入库管理 - 新建。','创建前需绑定支付宝（个人 / 企业均可，需为淘宝会员绑定的支付宝），后续费用自动划扣。'],img:[3,4,5]},
+        {t:'填写入库单基本信息',d:['入库类型选"采购入库"；选择入库仓库、供应商与到货方式。','快递 / 快运都选"快递"；快递填单号（可揽收后补填），物流填车牌司机电话，自送不填。','注：快递无需预约，物流和自送需预约入库。'],img:[6]},
+        {t:'选择送货明细',d:['支持手工添加或模板导入货品与计划入库数量，务必核对数量以免收货差异。'],img:[7,8]},
+        {t:'审核入库单',d:['创建后状态为"待审核"，点击"审核"。'],img:[9]},
+        {t:'预约入库单并打印',d:['点"预约"，选择大概到仓日期（前后一天均可收货）。','预约后状态变"仓接单"，点【打印箱唛】打印箱唛（标注每箱货品与件数），能打一定打。','勾选入库单点打印，送货单随货，必须打印。'],img:[10,11,12,13]},
+        {t:'编辑快递单号',d:['若显示【未关联运单】，点【更多】-【编辑运单】填入快递单号。'],img:[14,15]},
+        {t:'查看快递单号',d:['填入快递单号后，可实时查询快递最新轨迹。'],rel:[{to:'m6',label:'寄货到仓'}]},
+        {t:'补录快递单号',d:['选快递 / 快运且未填单号的，仓库会在钉钉服务群提醒，可在群内点"关联快递单号"补录（钉群未收到预警时联系小二配置）。']},
       ]},
       {id:'m6',stage:'st3',ic:'🚚',title:'货品寄送到仓',desc:'备货在途与到仓收货。',steps:[
-        {t:'寄货到指定仓',d:['按入库单把货寄到对应云仓，仓库收货清点后上架。'],todo:1,rel:[{to:'m7',label:'订单推送到仓'}]},
+        {t:'寄货到指定仓',d:['按入库单把货寄到对应云仓，仓库收货清点后上架。','快递到仓需提前沟通快递公司（不支持寄到驿站），送仓后把单号发到钉钉服务群告知仓库。'],rel:[{to:'m7',label:'订单推送到仓'}]},
       ]},
-      {id:'m7',stage:'st4',ic:'🛒',title:'订单推送到仓',desc:'对应 5.0 推单发货。',steps:[
-        {t:'订单审核 / 推送',d:['查看待处理、异常单（缺货/未绑定），审核通过后推送到仓发货。'],todo:1,rel:[{to:'m4',label:'商货品绑定'},{to:'m6',label:'寄送到仓'}]},
-        {t:'发货与物流跟踪',d:['仓库出库后跟踪包裹状态。'],todo:1,rel:[{to:'m8',label:'查看账单与开票'}]},
+      {id:'m7',stage:'st4',ic:'🛒',title:'订单推送到仓',desc:'审核并推单发货，处理常见异常。',note:'系统默认自动推单，也可手动审核推单；需等货送仓上架后再操作。',steps:[
+        {t:'平台订单审核',d:['路径：订单管理筛选"待审核订单"，审核后推送到仓发货。','订单状态变"仓库接单"即推单成功。','注：审核前请先选择货品包材方案。'],img:[1]},
+        {t:'手动订单',d:['订单管理页可一单一单创建，也支持批量导入。'],img:[2]},
+        {t:'异常 · 快递未匹配',d:['先确认已配置快递策略，否则：勾选订单 → 改仓改配 → 修改快递 → 选"菜鸟优配"确定 → 再审核。'],img:[3,4]},
+        {t:'异常 · 商品未关联',d:['先完成 3.0 商货品绑定，否则：勾选订单 → 更多操作 → 处理未关联订单 → 再审核。'],img:[5],rel:[{to:'m4',label:'商货品绑定'}]},
+        {t:'取消与拦截',d:['"未出库"及之前可取消；"已出库"未签收可拦截。','路径：CNBP - 订单 - 2C 订单 - 订单管理。'],img:[6]},
+        {t:'拆单与合单',d:['批量拆单、手工合单、智能合单（按合单策略自动合单）。'],img:[7]},
+        {t:'改商品',d:['批量修改订单商品（增删需谨慎）、拆开组合商品为子品。'],img:[8],rel:[{to:'m8',label:'查看账单与开票'}]},
       ]},
-      {id:'m8',stage:'st4',ic:'🧾',title:'查看账单与开票',desc:'对应 7.0 结算账单。',steps:[
-        {t:'查看账单',d:['按月查看仓储、配送、增值等服务费用明细。'],todo:1},
-        {t:'开发票',d:['发起开票申请，填写抬头并下载发票。'],todo:1,rel:[{to:'s7',label:'小程序·查看账单',tab:'mp'}]},
+      {id:'m8',stage:'st4',ic:'🧾',title:'查看账单与开票',desc:'查看、下载明细账单与费用汇总账单。',steps:[
+        {t:'明细账单',d:['查看单据详情，查看 / 下载商家月维度账单（当月与历史已合并为"明细账单"）。'],img:[1]},
+        {t:'按单号查询',d:['明细账单 → 查看详情。'],img:[2,3]},
+        {t:'按条件查询',d:['明细账单 → 选时间维度与范围 → 选服务产品、费用项 → 查询。'],img:[4]},
+        {t:'账单三种类型',d:['交易明细账单、货运明细账单、By 费用项汇总。'],img:[5]},
+        {t:'下载明细账单',d:['下载查询结果 → 选下载内容 → 确认 → 在【下载任务查询】看进度（支持按店铺名称筛选）。'],img:[6]},
+        {t:'下载 By 费用项汇总账单',d:['勾选下载内容 → 下载 → 确认 → 查看下载进度。'],img:[7],rel:[{to:'s7',label:'小程序·查看账单',tab:'mp'}]},
       ]},
-      {id:'m9',stage:'st4',ic:'✨',title:'增值服务',desc:'对应 6.0 增值服务。',steps:[
-        {t:'发起增值服务',d:['贴标、组套、拆箱等增值服务下单与跟踪。'],todo:1},
+      {id:'m9',stage:'st4',ic:'✨',title:'增值服务',desc:'代贴条码、货物装卸、二次理货等增值服务下单。',steps:[
+        {t:'何时需要增值服务',d:['产品无自带条码 → 代贴条码；司机不卸货、需仓库卸货 → 货物装卸；混 SKU 到货 → 二次理货。']},
+        {t:'新建增值服务单',d:['路径：订单管理 - 增值服务单 - 新建。'],img:[1]},
+        {t:'填写增值单',d:['Step1 选增值服务 → Step2 选仓库 → Step3 选 / 导入货品 → Step4 编辑数量（一般对应入仓数量）→ Step5 提交，状态"同步中"等待仓库。'],img:[2,3,4,5]},
       ]},
-      {id:'m10',stage:'st4',ic:'↩️',title:'售后 · 退供出库',desc:'对应 8.0 退供出库单。',steps:[
-        {t:'退供出库',d:['逆向退货、退供出库单的创建与处理。'],todo:1},
+      {id:'m10',stage:'st4',ic:'↩️',title:'售后 · 退供出库',desc:'滞销 / 过期商品退回供应商，出库并扣减库存。',steps:[
+        {t:'进入退供管理',d:['菜单：出入库 & 库内 - 退供管理。'],img:[1]},
+        {t:'新建退供单',d:['Step1 新建单据 → Step2 完善仓库、收件人、货品信息 → 保存提交。'],img:[2,3,4,5]},
+        {t:'出库状态流转',d:['仓库接单后状态更新为"待出库"；出库完成更新为"已出库"，同时扣减库存。']},
+        {t:'拦截退供单',d:[],img:[6,7,8]},
       ]},
     ]
   },
   mp:{
     modules:[
       {id:'s1',stage:'st1',ic:'🔑',title:'登录小程序',desc:'手机端第一步。',steps:[
-        {t:'进入并登录小程序',d:['首页飘条 / 「我的」进入；快捷登录自动取本机手机号，也可其他手机号验证码登录。','⚠️ 请使用主账号注册的手机号登录。'],rel:[{to:'s2',label:'子账号登录'}]},
+        {t:'进入并登录小程序',d:['首页飘条 / 「我的」进入；快捷登录自动取本机手机号，也可其他手机号验证码登录。','⚠️ 请使用主账号注册的手机号登录。'],img:[1,2,3],rel:[{to:'s2',label:'子账号登录'}]},
       ]},
       {id:'s2',stage:'st1',ic:'👥',title:'子账号登录',desc:'团队成员用子账号登录。',steps:[
-        {t:'子账号登录操作',d:['（源文档为操作视频，待补截图/视频占位）'],todo:1},
+        {t:'子账号登录操作',d:['（源文档为操作视频，暂以文字说明，视频 / 截图待补）'],todo:1},
       ]},
-      {id:'s3',stage:'st2',ic:'📦',title:'货品管理',desc:'新建/编辑单个或组合货品。',steps:[
-        {t:'新增 / 编辑货品',d:['「我的-货品」或首页入库单直接新增。','维护图片、名称，点【识图】自动识别；无条码可选【实物不带条码】系统生成。'],rel:[{to:'s4',label:'商货品绑定'}]},
+      {id:'s3',stage:'st2',ic:'📦',title:'货品管理',desc:'新建 / 编辑单个或组合货品。',steps:[
+        {t:'新增 / 编辑货品',d:['「我的 - 货品」或首页入库单直接新增。','维护图片、名称，点【识图】自动识别；无条码可选【实物不带条码】系统生成。'],img:[1,2,3,4,5],rel:[{to:'s4',label:'商货品绑定'}]},
         {t:'打印条码 / 批量上传',d:['这两项目前小程序暂不支持，需到 PC 端完成。'],pc:true,pcTarget:{tab:'pc',module:'m4'}},
       ]},
-      {id:'s4',stage:'st2',ic:'🔗',title:'商货品绑定',desc:'「我的-商品」把商品与货品关联。',steps:[
-        {t:'绑定 / 打标',d:['绑定货品：关联仓库货品；打标：标记自发货（不入云仓的品）；标记虚拟品。'],rel:[{to:'s3',label:'货品管理'},{to:'s5',label:'入库操作'}]},
+      {id:'s4',stage:'st2',ic:'🔗',title:'商货品绑定',desc:'「我的 - 商品」把商品与货品关联。',steps:[
+        {t:'绑定 / 打标',d:['绑定货品：关联仓库货品；打标：标记自发货（不入云仓的品）；标记虚拟品。'],img:[1,2],rel:[{to:'s3',label:'货品管理'},{to:'s5',label:'入库操作'}]},
       ]},
       {id:'s5',stage:'st3',ic:'🗒️',title:'入库操作',desc:'首页新建入库单。',steps:[
-        {t:'新建入库单',d:['1) 选择/新建货品  2) 维护送货信息（自送/物流、箱数）  3) 打印箱唛 & 入库单。','已在 PC 建过的入库单，可在小程序改送货方式、补箱数后打印箱唛。'],rel:[{to:'s3',label:'货品管理'},{to:'m5',label:'PC·建入库单',tab:'pc'}]},
+        {t:'新建入库单',d:['1) 选择 / 新建货品　2) 维护送货信息（自送 / 物流、箱数）　3) 打印箱唛 & 入库单。','已在 PC 建过的入库单，可在小程序改送货方式、补箱数后打印箱唛。'],img:[1,2,3,4],rel:[{to:'s3',label:'货品管理'},{to:'m5',label:'PC·建入库单',tab:'pc'}]},
       ]},
       {id:'s6',stage:'st4',ic:'✅',title:'审核订单',desc:'下方菜单「订单」。',steps:[
-        {t:'查看并处理异常单',d:['处理缺货 / 未绑定货品等异常；支持手动审核。'],rel:[{to:'s4',label:'商货品绑定'}]},
-        {t:'编辑订单',d:['点击具体订单进行编辑。']},
+        {t:'查看并处理异常单',d:['处理缺货 / 未绑定货品等异常；支持手动审核。'],img:[1,2],rel:[{to:'s4',label:'商货品绑定'}]},
+        {t:'编辑订单',d:['点击具体订单进行编辑。'],img:[3]},
       ]},
       {id:'s7',stage:'st4',ic:'🧾',title:'查看账单',desc:'首页「账单」。',steps:[
-        {t:'查看账单明细',d:['按月查看费用明细。'],pc:true,pcTarget:{tab:'pc',module:'m8'}},
+        {t:'查看账单明细',d:['按月查看费用明细；开票等完整账单能力需在 PC 查看。'],img:[1,2],pc:true,pcTarget:{tab:'pc',module:'m8'}},
       ]},
       {id:'s8',stage:'st4',ic:'🎧',title:'服务工单',desc:'首页「服务工单」。',steps:[
-        {t:'处理工单',d:['本期暂不能新建工单，但可对已有工单进行处理与跟进。']},
+        {t:'处理工单',d:['本期暂不能新建工单，但可对已有工单进行处理与跟进。'],img:[1,2,3]},
       ]},
     ]
   }
 };
 
 const FAQ = [
-  {q:'入驻云仓需要准备哪些资料？',a:'（待补：营业执照、法人信息、支付宝账号等，确认后从源「常见问题」页填充）'},
-  {q:'小程序能做的和 PC 能做的有什么区别？',a:'查看/建品/绑定/入库/审单可在小程序；打印条码、批量上传、88 小仓查看账单等须转 PC。'},
-  {q:'订单一直显示异常 / 发不出去怎么办？',a:'（待补：常见异常如缺货、货品未绑定、地址异常等的处理）'},
-  {q:'账单什么时候出，怎么开发票？',a:'（待补：出账周期与开票入口）'},
-  {q:'货品没有自带条码怎么办？',a:'在小程序或 PC 录入货品时选【实物不带条码】，系统会自动生成一串条码供使用。'},
+  {q:'什么是菜鸟云仓？',a:'菜鸟云仓 = 专业的大仓库 + 帮你管理库存、拣货打包、发货的专业团队。把你的货提前放进大仓库，你只管卖货，来单后仓库自动打包好、贴好快递单、发走。'},
+  {q:'云仓发货是怎么收费的？',a:'一单通常包含：① 订单处理费（人工费，含入库卸货清点上架、保管、打单分拣复核打包称重出库等）；② 配送费（快递费，按快递类型 / 发货量 / 包裹重量 / 距离确定）；③ 包材费（纸箱、气泡袋等耗材，自采则不收）；④ 仓储费（正常周转不收：≤30 天 0 元、31–45 天 1.2、46–60 天 1.5、61–90 天 2、>90 天 3 元 / 立方 / 天）；⑤ 增值服务（按需主动下发，如质检、贴标、换包装、组套、退货处理）。'},
+  {q:'我的货能不能入仓？需要满足哪些条件？',a:'非易燃易爆、违禁品、活体等快递明文禁收物品，及非医药、非冷冻冷藏生鲜，均可入仓；部分类目满足条件才可收货。更多禁收 / 限收见"品类收寄标准名录"。'},
+  {q:'我单量少能不能入仓？',a:'可以，每天只发一单也能入仓。'},
+  {q:'货物应该怎么送到仓？',a:'支持快递、物流、货拉拉等多种形式送仓，最好送货上门。快递到仓需提前和快递公司沟通，不支持寄到驿站；包裹送仓后把快递单号在钉钉服务群告知仓库，以免影响上架，同时需满足备货要求。'},
+  {q:'对接云仓需要自己购买 ERP 吗？',a:'不用，菜鸟提供免费 ERP，支持订单自动发货、异常自动预警、一键催发催派、在线拦截等，目前在 PC 端使用。若已有 ERP，可联系实施同学做系统对接，再推单到菜鸟仓。'},
+  {q:'仓库最晚发货到什么时候？',a:'一般截单时间为 18:00，18:00 前推单至菜鸟仓的订单当天都能发出；个别仓库会延迟到 20:00。'},
+  {q:'仓库的作业流程是什么样的？',a:'货送仓后做标准化库位管理 → 消费者下单后 WMS 生成拣货任务（标注位置 / 数量 / 优先级）→ 拣货员按路径快速拣选 → 扫码复核后打包，避免错发漏发 → 滚动发车出库，快递门口接货直送分拨 → 专业团队处理拦截、改地址、催派等异常，全流程服务。'},
+  {q:'账单和开票问题怎么咨询？',a:'在商家工作台点击"服务"-"金掌柜"，登录后在右上角找到人工客服咨询；咨询时间为工作日 9:30–18:30。'},
+  {q:'小程序能做的和 PC 能做的有什么区别？',a:'登录 / 建品 / 绑定 / 入库 / 审单 / 查账单等日常操作可在小程序完成；打印条码、批量上传、完整账单与开票等仍需在 PC 端处理。'},
 ];
 
-/* ================= 截图资源（模块 id -> 图片路径，相对本 HTML 的 assets/） ================= */
+/* ================= 截图资源（模块 id -> 图片路径，按源文档图序号排列） ================= */
 const IMAGES={
   "m1":["assets/m1_1.jpg","assets/m1_2.jpg","assets/m1_3.jpg","assets/m1_4.jpg","assets/m1_5.jpg","assets/m1_6.jpg"],
   "m2":["assets/m2_1.jpg","assets/m2_2.jpg","assets/m2_3.jpg","assets/m2_4.jpg","assets/m2_5.jpg","assets/m2_6.jpg","assets/m2_7.jpg"],
@@ -300,32 +351,36 @@ const $=s=>document.querySelector(s);
 function esc(t){return (t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function stg(id){return STAGES.find(s=>s.id===id);}
 
-function stepHTML(m,s,i){
+function stepImgs(m,s){
+  const valid=IMAGES[m.id]||[];
+  const idxs=s.img||[];
+  if(!idxs.length) return '';
+  const cells=idxs.map(i=>({gi:i,src:valid[i-1]})).filter(o=>o.src);
+  if(!cells.length) return '';
+  const n=cells.length;
+  const thumbs=cells.map((c,j)=>{
+    const cap=`${m.title} · ${s.t} · 图 ${c.gi}（${j+1}/${n}）`;
+    return `<div class="th" data-cap="${esc(cap)}"><img src="${c.src}" alt="${esc(cap)}" loading="lazy" onerror="this.closest('.th').style.display='none'"><span class="n">${c.gi}</span><span class="mag">🔍 点击放大</span></div>`;
+  }).join('');
+  return `<div class="step-imgs">${thumbs}</div>`;
+}
+function stepHTML(m,s,i,tab){
   let chip='';
   if(s.pc) chip=`<span class="chip chip-pc" onclick="goto('${s.pcTarget.tab}','${s.pcTarget.module}')">⚠️ 需在 PC 端完成 ›</span>`;
   else if(s.todo) chip=`<span class="chip chip-todo">正文待补</span>`;
   const desc=Array.isArray(s.d)?`<ul>${s.d.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:esc(s.d||'');
-  const rels=(s.rel&&s.rel.length)?`<div class="rels"><span class="rl-lbl">🔗 相关步骤：</span>${s.rel.map(r=>`<span class="rel" onclick="goto('${r.tab||curTab}','${r.to}')">${esc(r.label)} ›</span>`).join('')}</div>`:'';
+  const rels=(s.rel&&s.rel.length)?`<div class="rels"><span class="rl-lbl">🔗 相关步骤：</span>${s.rel.map(r=>`<span class="rel" onclick="goto('${r.tab||tab}','${r.to}')">${esc(r.label)} ›</span>`).join('')}</div>`:'';
   return `<div class="step" id="${m.id}-${i}">
     <div class="step-h"><span class="step-n">步骤 ${i+1}</span><h4 class="step-t">${esc(s.t)}</h4>${chip}</div>
-    <div class="step-d">${desc}</div>${rels}</div>`;
+    <div class="step-d">${desc}</div>${rels}${stepImgs(m,s)}</div>`;
 }
-function galleryHTML(m){
-  const list=IMAGES[m.id];
-  if(!list||!list.length) return '';
-  const n=list.length;
-  const thumbs=list.map((src,i)=>{
-    const cap=`${m.title} · 图示 ${i+1}/${n}`;
-    return `<div class="th" data-cap="${esc(cap)}"><img src="${src}" alt="${esc(cap)}" loading="lazy" onerror="this.closest('.th').style.display='none'"><span class="n">${i+1}/${n}</span><span class="mag">🔍 点击放大</span></div>`;
-  }).join('');
-  return `<div class="gal-cap">📷 操作截图（共 ${n} 张，<span class="z">点击可放大</span>）</div><div class="gal">${thumbs}</div>`;
-}
-function moduleHTML(m){
+function moduleHTML(m,tab){
+  const note=m.note?`<div class="tip${m.noteWarn?' warn':''}"><span class="e">${m.noteWarn?'⚠️':'💡'}</span><div>${esc(m.note)}</div></div>`:'';
   return `<section class="mod" id="${m.id}">
     <div class="mod-h"><div class="mod-ic">${m.ic}</div><div><div class="kicker">${stg(m.stage).name}</div><h2>${m.title}</h2></div></div>
     <div class="mod-desc">${esc(m.desc)}</div>
-    ${m.steps.map((s,i)=>stepHTML(m,s,i)).join('')}
-    ${galleryHTML(m)}
+    ${note}
+    ${m.steps.map((s,i)=>stepHTML(m,s,i,tab)).join('')}
   </section>`;
 }
 function stagebarHTML(){
@@ -349,13 +404,13 @@ function tocHTML(mods){
 function renderFlow(tab){
   const mods=GUIDE[tab].modules;
   const callout = tab==='pc'?'':
-    `<div class="tip warn" style="margin:16px 30px 0"><span class="e">📌</span><div>小程序可完成大部分日常操作；<b>打印条码、批量上传、88 小仓查看账单</b>等仍需去 PC。看到橙色「需在 PC 端完成」标签，点一下即跳到 PC 版对应模块。</div></div>`;
+    `<div class="tip warn" style="margin:16px 30px 0"><span class="e">📌</span><div>小程序可完成大部分日常操作；<b>打印条码、批量上传、完整账单开票</b>等仍需去 PC。看到橙色「需在 PC 端完成」标签，点一下即跳到 PC 版对应模块。</div></div>`;
   let content='';
   STAGES.forEach(sg=>{
     const inS=mods.filter(m=>m.stage===sg.id);
     if(!inS.length) return;
     content+=`<div class="stage-head" id="${sg.id}"><div class="sh-ic">${sg.ic}</div><div><div class="sh-t">${sg.name}</div><div class="sh-s">${sg.sub}</div></div></div>`;
-    content+=inS.map(moduleHTML).join('');
+    content+=inS.map(m=>moduleHTML(m,tab)).join('');
   });
   $('#panel-'+tab).innerHTML = stagebarHTML()+callout+
     `<div class="layout"><nav class="toc">${tocHTML(mods)}</nav><main class="body">${content}</main></div>`;
@@ -364,7 +419,7 @@ function renderFlow(tab){
 function renderFAQ(){
   const items=FAQ.map((f,i)=>`<div class="faq-item" id="faq${i}"><button class="faq-q" onclick="document.getElementById('faq${i}').classList.toggle('open')">${esc(f.q)}<span class="arw">▾</span></button><div class="faq-a">${esc(f.a)}</div></div>`).join('');
   $('#panel-faq').innerHTML=`<div class="faq"><div class="faq-h"><span class="bar"></span>常 见 问 题（PC / 小程序 通用）</div>
-    <div class="tip"><span class="e">💡</span><div>两端共享 FAQ，正文从源手册「菜鸟云仓常见问题」页抓取后填充。</div></div>${items}</div>`;
+    <div class="tip"><span class="e">💡</span><div>点击问题展开答案，正文取自源手册「菜鸟云仓常见问题」。</div></div>${items}</div>`;
 }
 
 /* ================= 交互 ================= */
@@ -407,16 +462,16 @@ let lbGroup=[],lbIdx=0;
 function openLB(el){
   const img=el.querySelector('img');if(!img)return;
   $('#lbImg').src=img.src;
-  $('#lbCap').textContent=el.dataset.cap||(el.querySelector('.cap')?.textContent||'');
-  const gal=el.closest('.gal');
-  if(gal){lbGroup=[...gal.querySelectorAll('.th')];lbIdx=lbGroup.indexOf(el);}
+  $('#lbCap').textContent=el.dataset.cap||'';
+  const wrap=el.closest('.step-imgs')||el.closest('.gal');
+  if(wrap){lbGroup=[...wrap.querySelectorAll('.th')];lbIdx=lbGroup.indexOf(el);}
   else{lbGroup=[];lbIdx=0;}
   $('#lb').classList.add('show');
 }
 function lbStep(d){if(!lbGroup.length)return;lbIdx=(lbIdx+d+lbGroup.length)%lbGroup.length;openLB(lbGroup[lbIdx]);}
 function closeLB(){$('#lb').classList.remove('show');}
 document.addEventListener('click',e=>{
-  const t=e.target.closest('.gal .th')||e.target.closest('.shot');
+  const t=e.target.closest('.th');
   if(t){openLB(t);return;}
   if(e.target.id==='lb'||e.target.classList.contains('x'))closeLB();
 });
