@@ -113,6 +113,13 @@
   .tip .e{font-size:17px}
   .tip.warn{background:#fff6f0;border-color:#ffd9c2;color:#8a4718}
 
+  /* 外部资源链接 chips */
+  .lnk{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600;color:var(--brand);background:#f0f5ff;border:1px solid #d7e3ff;border-radius:20px;padding:4px 12px;text-decoration:none;transition:.15s;white-space:nowrap}
+  .lnk:hover{background:var(--brand);color:#fff;border-color:var(--brand)}
+  .mod-links{display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:#f7faff;border:1px dashed #cfe0ff;border-radius:12px;padding:10px 14px;margin:6px 0 4px}
+  .mod-links .ml-lbl{font-size:12.5px;color:var(--ink-3);font-weight:700}
+  .step-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:9px}
+
   /* FAQ */
   .faq{padding:24px 30px 40px}
   .faq-h{font-size:18px;font-weight:800;display:flex;align-items:center;gap:8px;margin-bottom:6px}
@@ -185,6 +192,60 @@ const STAGES = [
 
 /* ================= 数据：PC / 小程序 ================= */
 /* step: t 标题 | d 说明(数组/字符串) | img 该步截图在源文档中的图序号 | pc+pcTarget 需转PC | rel 互链[{to,label,tab?}] | todo 正文待补 */
+/* ================= 拼多多 · 管易云对接（PC / 小程序 共用同一套步骤与截图） ================= */
+const PDD_LINKS=[
+  {u:'https://alidocs.dingtalk.com/i/nodes/Obva6QBXJwxNZoMOCM7vbXL48n4qY5Pr',t:'管易云对接常见 QA'},
+  {u:'assets/pdd_template.xlsx',t:'管易云商品及规格导入模板 (.xlsx)',dl:1},
+];
+const PDD_STEPS=[
+  {t:'登录并激活管易云账号',d:[
+    '用管易云账号登录，首次进入需完成"账户激活"。',
+    '登录成功后，在左上角把菜单切换到「电商 ERP」工作台，再进入后续操作。'],img:[1,2,3]},
+  {t:'从 CNBP 导出货品信息',d:[
+    '先在菜鸟 CNBP 里把单个普通货品的信息导出，作为管易云建品的数据来源。',
+    '导出内容包含货品名称、编码、条码等，后面批量导入会用到。'],img:[4,5],rel:[{to:'m4',label:'PC·商货品管理',tab:'pc'}]},
+  {t:'批量导入管易云',d:[
+    '把导出的货品信息按固定模板整理后，在管易云"商品 - 批量导入"上传。',
+    '务必使用下方固定模板填写，字段错位会导致导入失败或绑定错乱。'],img:[6,7],links:[{u:'assets/pdd_template.xlsx',t:'下载固定模板',dl:1}]},
+  {t:'填写规格编码 / 核对货品编码',d:[
+    '在拼多多后台为每个规格填写"规格编码"。',
+    '规格编码需与菜鸟货品编码保持一致，两边对齐后才能正确绑定、避免发错货。'],img:[8,9]},
+  {t:'开启负库存',d:[
+    '在管易云库存设置中开启"负库存"，避免平台已来单、云仓尚未同步时被判缺货而卡单。'],img:[10,11]},
+  {t:'维护食品保质期（食品类）',d:[
+    '食品类目需先"编辑货品"补全保质期字段，再在保质期维护页录入生产 / 到期日期规则。'],img:[12,13]},
+  {t:'创建组合商品',d:[
+    '进入"组合商品"界面 → 新增组合商品，先维护供应商信息、"自动拆分"保持默认。',
+    '分别选择组成子件货品 1、货品 2，生成管易云组合货品代码。',
+    '把该组合货品代码回填到拼多多后台的规格编码，实现组合 SKU 对应。'],img:[14,15,16,17,18,19,20,21]},
+  {t:'维护商品条码',d:[
+    '进入商品条码页维护条码；菜鸟侧条码在 CNBP 的货品条码位置查看，两边需一致。'],img:[22,23,24]},
+  {t:'同步货品',d:['完成建品与条码后，执行"同步货品"，把管易云商品信息同步到发货链路。'],img:[25]},
+  {t:'选择包装方案',d:['进入包装方案页，为每个货品选择包装方案（不选会默认菜鸟纸箱并计费）。'],img:[26,27],rel:[{to:'m4',label:'PC·包装方案',tab:'pc'}]},
+  {t:'授权店铺（去订购 → 登录授权）',d:[
+    '在管易云点击"去订购"，进入服务市场订购页面，登录后完成对拼多多店铺的授权。'],img:[28,29,30],rel:[{to:'m3',label:'PC·店铺授权',tab:'pc'}]},
+  {t:'平台商品绑定 / 铺货',d:[
+    '进入"平台铺货"，下载平台商品，逐项自查规格编码是否已正确关联到管易云货品。',
+    '缺失或不一致的，删除重下或修改后重下，直到平台商品与货品"一致"，绑定才算完成。'],img:[31,32,33,34,35,36,37,38]},
+  {t:'订单推送',d:[
+    '订单流程：店铺 → 管易云审核（默认自动）→ 推送到 CNBP → CNBP 审核（默认自动）→ 仓库发货 → 出库自动回传。',
+    '在管易云与 CNBP 两侧对应的状态里确认订单已成功推送。'],img:[39,40],rel:[{to:'m7',label:'PC·订单推送到仓',tab:'pc'}]},
+  {t:'手动审核订单',d:['如需人工干预，在"待审核"列表筛选订单后点击"审核"推单。'],img:[41,42]},
+  {t:'更换货品',d:[
+    '⚠️ 拼多多的换货品等订单操作只在管易云进行，不要在 CNBP 操作，以免引发店铺客诉。',
+    '勾选需修改的订单 → "替换商品"完成换货。'],img:[43,44]},
+  {t:'逆向 · 拦截',d:['需要拦截的订单在 CNBP 处理拦截（换货等在管易云，拦截走 CNBP）。'],img:[45],rel:[{to:'m7',label:'PC·取消与拦截',tab:'pc'}]},
+  {t:'手工已发处理',d:[
+    '管易云侧标为"手工已发"的订单处于待审核；对应订单如需作废，在 CNBP 侧执行"取消"。'],img:[46,47]},
+  {t:'退供单 & 售后咨询',d:[
+    '滞销 / 退回供应商的货通过退供单出库并扣减库存。',
+    '遇到对接疑问，在售后咨询入口联系对接小二。'],img:[48,49],rel:[{to:'m10',label:'PC·退供出库',tab:'pc'}]},
+  {t:'常见问题 QA',d:[
+    '关联商品：确认平台商品已正确关联货品；',
+    '点了没反应：多为浏览器拦截 / 登录态失效，重登或换浏览器再试；',
+    '拆单、合单后部分退货等特殊场景按 QA 图示处理。'],img:[50,51,52,53,54]},
+];
+
 const GUIDE = {
   pc:{
     modules:[
@@ -213,7 +274,7 @@ const GUIDE = {
         {t:'进入商家中心',d:['签约完毕后，根据页面弹出步骤继续操作。'],img:[7],rel:[{to:'m3',label:'店铺授权'}]},
       ]},
       {id:'m3',stage:'st2',ic:'🏬',title:'店铺授权',desc:'把各平台店铺授权给云仓，用于自动拉单（使用菜鸟 ERP 时）。',note:'仅在使用菜鸟 ERP 时需要；使用外部 ERP 的商家在自家 ERP 操作即可。',steps:[
-        {t:'创建店铺',d:['路径：进入店铺管理后点击"创建店铺"。','提示：拼多多暂不支持 CNBP 直接对接，需第三方系统推单或手工建单，可咨询对接小二。'],img:[1,2]},
+        {t:'创建店铺',d:['路径：进入店铺管理后点击"创建店铺"。','提示：拼多多暂不支持 CNBP 直接对接，需单独购买管易云 ERP 对接（见下方「拼多多店铺 · 管易云对接」模块）；无管易云时可第三方系统推单或手工建单，可咨询对接小二。'],img:[1,2],rel:[{to:'pdd',label:'拼多多·管易云对接'}]},
         {t:'授权店铺',d:['1688 店铺对接前可领 2000 元优惠券，领取后 0 元订购。'],img:[3,4]},
         {t:'审核订购 · 进入拉单店铺',d:['淘宝 / 天猫、京东需审核后回到服务市场完成付款；抖音、快手、1688 直接登录对应店铺授权。'],img:[5,6,7,8,9,10]},
         {t:'其他店铺 · 线上店铺管理',d:['电商平台以外的店铺，通过【其他平台】新建授权。','路径：基础 - 线上店铺管理。'],img:[11]},
@@ -236,6 +297,10 @@ const GUIDE = {
         {t:'包材照片示意图',d:[],img:[22]},
         {t:'经济仓报价',d:['具体费用见经济仓报价页面。'],img:[23],rel:[{to:'m5',label:'建入库单'}]},
       ]},
+      {id:'pdd',stage:'st2',ic:'🧩',title:'拼多多店铺 · 管易云对接',desc:'拼多多不支持 CNBP 直接对接，需单独购买管易云 ERP，在管易云拉单、绑货后推送到菜鸟仓发货。',
+        note:'拼多多的订单相关操作只在管易云进行（如更换货品），尽量不要在菜鸟系统 CNBP 操作，防止引发店铺客诉；订单拦截在 CNBP 处理。',noteWarn:1,
+        note2:'订单流程：店铺拉单到管易云 → 管易云审核（默认自动）→ 推送到 CNBP → CNBP 审核（默认自动）→ 仓库发货 → 出库自动回传。',
+        links:PDD_LINKS, steps:PDD_STEPS},
       {id:'m5',stage:'st3',ic:'🗒️',title:'建入库单',desc:'维护供应商、创建入库单、预约送仓并打印箱唛。',note:'备货入库必须按入库规范：货品有条码（无则可自贴或仓代贴）、外箱有箱唛、SKU 物理隔离，否则仓库有权拒收 / 退回。',noteWarn:1,steps:[
         {t:'维护供应商信息（首次）',d:['路径：基础信息 - 供应商信息 - 新建，填写信息后"确定"。'],img:[1,2]},
         {t:'新建入库单',d:['路径：出入库 & 库内 - 入库管理 - 新建。','创建前需绑定支付宝（个人 / 企业均可，需为淘宝会员绑定的支付宝），后续费用自动划扣。'],img:[3,4,5]},
@@ -295,6 +360,10 @@ const GUIDE = {
       {id:'s4',stage:'st2',ic:'🔗',title:'商货品绑定',desc:'「我的 - 商品」把商品与货品关联。',steps:[
         {t:'绑定 / 打标',d:['绑定货品：关联仓库货品；打标：标记自发货（不入云仓的品）；标记虚拟品。'],img:[1,2],rel:[{to:'s3',label:'货品管理'},{to:'s5',label:'入库操作'}]},
       ]},
+      {id:'pddm',imgKey:'pdd',stage:'st2',ic:'🧩',title:'拼多多店铺 · 管易云对接',desc:'拼多多同样不支持 CNBP 直接对接，需单独购买管易云 ERP；管易云为 PC 网页系统，建品 / 绑货 / 授权 / 铺货等完整操作请在电脑端进行，流程与 PC 版一致。',
+        note:'订单相关操作只在管易云进行（如更换货品），尽量不要在菜鸟 CNBP 操作以免客诉；订单拦截在 CNBP 处理。',noteWarn:1,
+        note2:'订单流程：店铺拉单到管易云 → 管易云审核 → 推送到 CNBP → CNBP 审核 → 仓库发货 → 出库回传。',
+        links:PDD_LINKS, steps:PDD_STEPS},
       {id:'s5',stage:'st3',ic:'🗒️',title:'入库操作',desc:'首页新建入库单。',steps:[
         {t:'新建入库单',d:['1) 选择 / 新建货品　2) 维护送货信息（自送 / 物流、箱数）　3) 打印箱唛 & 入库单。','已在 PC 建过的入库单，可在小程序改送货方式、补箱数后打印箱唛。'],img:[1,2,3,4],rel:[{to:'s3',label:'货品管理'},{to:'m5',label:'PC·建入库单',tab:'pc'}]},
       ]},
@@ -336,6 +405,7 @@ const IMAGES={
   "m8":["assets/m8_1.jpg","assets/m8_2.jpg","assets/m8_3.jpg","assets/m8_4.jpg","assets/m8_5.jpg","assets/m8_6.jpg","assets/m8_7.jpg"],
   "m9":["assets/m9_1.jpg","assets/m9_2.jpg","assets/m9_3.jpg","assets/m9_4.jpg","assets/m9_5.jpg"],
   "m10":["assets/m10_1.jpg","assets/m10_2.jpg","assets/m10_3.jpg","assets/m10_4.jpg","assets/m10_5.jpg","assets/m10_6.jpg","assets/m10_7.jpg","assets/m10_8.jpg"],
+  "pdd":["assets/pdd_1.jpg","assets/pdd_2.jpg","assets/pdd_3.jpg","assets/pdd_4.jpg","assets/pdd_5.jpg","assets/pdd_6.jpg","assets/pdd_7.jpg","assets/pdd_8.jpg","assets/pdd_9.jpg","assets/pdd_10.jpg","assets/pdd_11.jpg","assets/pdd_12.jpg","assets/pdd_13.jpg","assets/pdd_14.jpg","assets/pdd_15.jpg","assets/pdd_16.jpg","assets/pdd_17.jpg","assets/pdd_18.jpg","assets/pdd_19.jpg","assets/pdd_20.jpg","assets/pdd_21.jpg","assets/pdd_22.jpg","assets/pdd_23.jpg","assets/pdd_24.jpg","assets/pdd_25.jpg","assets/pdd_26.jpg","assets/pdd_27.jpg","assets/pdd_28.jpg","assets/pdd_29.jpg","assets/pdd_30.jpg","assets/pdd_31.jpg","assets/pdd_32.jpg","assets/pdd_33.jpg","assets/pdd_34.jpg","assets/pdd_35.jpg","assets/pdd_36.jpg","assets/pdd_37.jpg","assets/pdd_38.jpg","assets/pdd_39.jpg","assets/pdd_40.jpg","assets/pdd_41.jpg","assets/pdd_42.jpg","assets/pdd_43.jpg","assets/pdd_44.jpg","assets/pdd_45.jpg","assets/pdd_46.jpg","assets/pdd_47.jpg","assets/pdd_48.jpg","assets/pdd_49.jpg","assets/pdd_50.jpg","assets/pdd_51.jpg","assets/pdd_52.jpg","assets/pdd_53.jpg","assets/pdd_54.jpg"],
   "s1":["assets/s1_1.jpg","assets/s1_2.jpg","assets/s1_3.jpg"],
   "s3":["assets/s3_1.jpg","assets/s3_2.jpg","assets/s3_3.jpg","assets/s3_4.jpg","assets/s3_5.jpg"],
   "s4":["assets/s4_1.jpg","assets/s4_2.jpg"],
@@ -352,7 +422,7 @@ function esc(t){return (t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replac
 function stg(id){return STAGES.find(s=>s.id===id);}
 
 function stepImgs(m,s){
-  const valid=IMAGES[m.id]||[];
+  const valid=IMAGES[m.imgKey||m.id]||[];
   const idxs=s.img||[];
   if(!idxs.length) return '';
   const cells=idxs.map(i=>({gi:i,src:valid[i-1]})).filter(o=>o.src);
@@ -364,22 +434,33 @@ function stepImgs(m,s){
   }).join('');
   return `<div class="step-imgs">${thumbs}</div>`;
 }
+function linkChip(l){
+  const ext=/^https?:/i.test(l.u);
+  const attrs=ext?'target="_blank" rel="noopener"':(l.dl?'download':'');
+  const ic=l.dl?'⬇️':(ext?'🔗':'📎');
+  return `<a class="lnk" href="${l.u}" ${attrs}>${ic} ${esc(l.t)}</a>`;
+}
 function stepHTML(m,s,i,tab){
   let chip='';
   if(s.pc) chip=`<span class="chip chip-pc" onclick="goto('${s.pcTarget.tab}','${s.pcTarget.module}')">⚠️ 需在 PC 端完成 ›</span>`;
   else if(s.todo) chip=`<span class="chip chip-todo">正文待补</span>`;
   const desc=Array.isArray(s.d)?`<ul>${s.d.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:esc(s.d||'');
   const rels=(s.rel&&s.rel.length)?`<div class="rels"><span class="rl-lbl">🔗 相关步骤：</span>${s.rel.map(r=>`<span class="rel" onclick="goto('${r.tab||tab}','${r.to}')">${esc(r.label)} ›</span>`).join('')}</div>`:'';
+  const lnks=(s.links&&s.links.length)?`<div class="step-links">${s.links.map(linkChip).join('')}</div>`:'';
   return `<div class="step" id="${m.id}-${i}">
     <div class="step-h"><span class="step-n">步骤 ${i+1}</span><h4 class="step-t">${esc(s.t)}</h4>${chip}</div>
-    <div class="step-d">${desc}</div>${rels}${stepImgs(m,s)}</div>`;
+    <div class="step-d">${desc}</div>${lnks}${rels}${stepImgs(m,s)}</div>`;
 }
 function moduleHTML(m,tab){
   const note=m.note?`<div class="tip${m.noteWarn?' warn':''}"><span class="e">${m.noteWarn?'⚠️':'💡'}</span><div>${esc(m.note)}</div></div>`:'';
+  const note2=m.note2?`<div class="tip"><span class="e">🔁</span><div>${esc(m.note2)}</div></div>`:'';
+  const links=(m.links&&m.links.length)?`<div class="mod-links"><span class="ml-lbl">📎 相关资料：</span>${m.links.map(linkChip).join('')}</div>`:'';
   return `<section class="mod" id="${m.id}">
     <div class="mod-h"><div class="mod-ic">${m.ic}</div><div><div class="kicker">${stg(m.stage).name}</div><h2>${m.title}</h2></div></div>
     <div class="mod-desc">${esc(m.desc)}</div>
+    ${links}
     ${note}
+    ${note2}
     ${m.steps.map((s,i)=>stepHTML(m,s,i,tab)).join('')}
   </section>`;
 }
