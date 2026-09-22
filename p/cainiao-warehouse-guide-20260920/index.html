@@ -120,6 +120,14 @@
   .mod-links{display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:#f7faff;border:1px dashed #cfe0ff;border-radius:12px;padding:10px 14px;margin:6px 0 4px}
   .mod-links .ml-lbl{font-size:12.5px;color:var(--ink-3);font-weight:700}
   .step-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:9px}
+  .mod-login{margin:6px 0 4px}
+  .mod-login .lnk{font-size:13.5px;padding:8px 16px;background:var(--brand);color:#fff;border-color:var(--brand);box-shadow:var(--shadow)}
+  .mod-login .lnk:hover{background:var(--brand-d);border-color:var(--brand-d)}
+  .step-qr{display:flex;align-items:center;gap:16px;margin-top:12px;background:linear-gradient(90deg,#f2f7ff,#f7faff);border:1px solid #d7e6ff;border-radius:12px;padding:14px 16px}
+  .step-qr .qr-th{width:150px;flex:0 0 150px;aspect-ratio:1/1;background:#fff}
+  .step-qr .qr-txt{font-size:14px;color:#274a86;font-weight:700}
+  .step-qr .qr-txt .qr-sub{display:block;font-size:12.5px;color:var(--ink-3);font-weight:500;margin-top:5px}
+  @media (max-width:520px){.step-qr{flex-direction:column;align-items:flex-start}}
 
   /* FAQ */
   .faq{padding:24px 30px 40px}
@@ -248,7 +256,7 @@ const PDD_STEPS=[
 const GUIDE = {
   pc:{
     modules:[
-      {id:'m1',stage:'st1',ic:'🔑',title:'登录与子账号',desc:'主账号登录 CNBP，并为团队创建角色与子账号。',steps:[
+      {id:'m1',stage:'st1',ic:'🔑',title:'登录与子账号',desc:'主账号登录菜鸟云仓后台，并为团队创建角色与子账号。',login:{u:'https://b.cainiao.com/business/dsc/oms/goods/goodsManageNew',t:'点击进入 · 菜鸟云仓后台'},steps:[
         {t:'认识主账号与子账号',d:[
           '商家入驻后，用店铺账号名和密码登录菜鸟系统，即"主账号"。',
           '多位员工负责不同模块时，可设置"子账号"，独立登录、按职责分配权限，提高管理效率。',
@@ -347,7 +355,7 @@ const GUIDE = {
   mp:{
     modules:[
       {id:'s1',stage:'st1',ic:'🔑',title:'登录小程序',desc:'手机端第一步。',steps:[
-        {t:'进入并登录小程序',d:['首页飘条 / 「我的」进入；快捷登录自动取本机手机号，也可其他手机号验证码登录。','⚠️ 请使用主账号注册的手机号登录。'],img:[1,2,3],rel:[{to:'s2',label:'子账号登录'}]},
+        {t:'进入并登录小程序',d:['首页飘条 / 「我的」进入；快捷登录自动取本机手机号，也可其他手机号验证码登录。','⚠️ 请使用主账号注册的手机号登录。'],qr:'assets/mp_qrcode.png',qrCap:'微信扫码，直接进入「菜鸟云仓」小程序',qrSub:'用手机微信「扫一扫」或长按图片识别二维码',img:[1,2,3],rel:[{to:'s2',label:'子账号登录'}]},
       ]},
       {id:'s2',stage:'st1',ic:'👥',title:'子账号登录',desc:'团队成员用子账号登录。',steps:[
         {t:'子账号登录操作',d:['（源文档为操作视频，暂以文字说明，视频 / 截图待补）'],todo:1},
@@ -446,17 +454,20 @@ function stepHTML(m,s,i,tab){
   const desc=Array.isArray(s.d)?`<ul>${s.d.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:esc(s.d||'');
   const rels=(s.rel&&s.rel.length)?`<div class="rels"><span class="rl-lbl">🔗 相关步骤：</span>${s.rel.map(r=>`<span class="rel" onclick="goto('${r.tab||tab}','${r.to}')">${esc(r.label)} ›</span>`).join('')}</div>`:'';
   const lnks=(s.links&&s.links.length)?`<div class="step-links">${s.links.map(linkChip).join('')}</div>`:'';
+  const qr=s.qr?`<div class="step-qr"><div class="th qr-th" data-cap="${esc(s.qrCap||'小程序码')}"><img src="${s.qr}" alt="${esc(s.qrCap||'小程序码')}" loading="lazy"><span class="mag">🔍 点击放大</span></div><div class="qr-txt">${esc(s.qrCap||'微信扫码进入小程序')}${s.qrSub?`<span class="qr-sub">${esc(s.qrSub)}</span>`:''}</div></div>`:'';
   return `<div class="step" id="${m.id}-${i}">
     <div class="step-h"><span class="step-n">步骤 ${i+1}</span><h4 class="step-t">${esc(s.t)}</h4>${chip}</div>
-    <div class="step-d">${desc}</div>${lnks}${rels}${stepImgs(m,s)}</div>`;
+    <div class="step-d">${desc}</div>${qr}${lnks}${rels}${stepImgs(m,s)}</div>`;
 }
 function moduleHTML(m,tab){
   const note=m.note?`<div class="tip${m.noteWarn?' warn':''}"><span class="e">${m.noteWarn?'⚠️':'💡'}</span><div>${esc(m.note)}</div></div>`:'';
   const note2=m.note2?`<div class="tip"><span class="e">🔁</span><div>${esc(m.note2)}</div></div>`:'';
   const links=(m.links&&m.links.length)?`<div class="mod-links"><span class="ml-lbl">📎 相关资料：</span>${m.links.map(linkChip).join('')}</div>`:'';
+  const login=m.login?`<div class="mod-login">${linkChip(m.login)}</div>`:'';
   return `<section class="mod" id="${m.id}">
     <div class="mod-h"><div class="mod-ic">${m.ic}</div><div><div class="kicker">${stg(m.stage).name}</div><h2>${m.title}</h2></div></div>
     <div class="mod-desc">${esc(m.desc)}</div>
+    ${login}
     ${links}
     ${note}
     ${note2}
