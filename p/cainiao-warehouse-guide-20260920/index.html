@@ -98,11 +98,15 @@
   .rel:hover{background:#e2ecff}
 
   /* 真实截图（点击放大） */
-  .th{position:relative;border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden;cursor:zoom-in;transition:.15s;aspect-ratio:16/10}
+  .th{position:relative;border:1px solid var(--line);border-radius:12px;background:#eef2f8;overflow:hidden;cursor:zoom-in;transition:.15s;aspect-ratio:16/10}
   .th:hover{border-color:var(--brand);box-shadow:var(--shadow-h);transform:translateY(-2px)}
-  .th img{width:100%;height:100%;object-fit:contain;display:block;background:#f7f9ff}
-  .th .n{position:absolute;left:8px;top:8px;background:rgba(29,33,41,.72);color:#fff;font-size:11px;font-weight:700;border-radius:6px;padding:1px 7px}
-  .th .mag{position:absolute;right:8px;bottom:8px;background:rgba(30,111,255,.9);color:#fff;font-size:11px;font-weight:600;border-radius:20px;padding:2px 9px;opacity:0;transition:.15s}
+  .th .sk{position:absolute;inset:0;z-index:0;display:grid;place-items:center;font-size:12px;color:#a4b0c4;background:linear-gradient(100deg,#eef2f8 30%,#f7faff 50%,#eef2f8 70%);background-size:200% 100%;animation:shimmer 1.3s infinite linear}
+  @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+  .th img{position:relative;z-index:1;width:100%;height:100%;object-fit:contain;display:block;background:#f7f9ff;opacity:0;transition:opacity .25s}
+  .th.ld img{opacity:1}
+  .th.ld .sk{display:none}
+  .th .n{position:absolute;left:8px;top:8px;z-index:2;background:rgba(29,33,41,.72);color:#fff;font-size:11px;font-weight:700;border-radius:6px;padding:1px 7px}
+  .th .mag{position:absolute;right:8px;bottom:8px;z-index:2;background:rgba(30,111,255,.9);color:#fff;font-size:11px;font-weight:600;border-radius:20px;padding:2px 9px;opacity:0;transition:.15s}
   .th:hover .mag{opacity:1}
   /* 截图直接跟在所属步骤文字下方 */
   .step-imgs{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;margin-top:12px}
@@ -437,7 +441,8 @@ function stepImgs(m,s){
   const n=cells.length;
   const thumbs=cells.map((c,j)=>{
     const cap=`${m.title} · ${s.t} · 图 ${c.gi}（${j+1}/${n}）`;
-    return `<div class="th" data-cap="${esc(cap)}"><img src="${c.src}" alt="${esc(cap)}" loading="lazy" onerror="this.closest('.th').style.display='none'"><span class="n">${c.gi}</span><span class="mag">🔍 点击放大</span></div>`;
+    const full=c.src, thumb=c.src.replace(/^assets\//,'assets/t/');
+    return `<div class="th" data-cap="${esc(cap)}" data-full="${full}"><img src="${thumb}" alt="${esc(cap)}" loading="lazy" decoding="async" onload="this.closest('.th').classList.add('ld')" onerror="this.closest('.th').style.display='none'"><span class="sk">加载中…</span><span class="n">${c.gi}</span><span class="mag">🔍 点击放大</span></div>`;
   }).join('');
   return `<div class="step-imgs">${thumbs}</div>`;
 }
@@ -454,7 +459,7 @@ function stepHTML(m,s,i,tab){
   const desc=Array.isArray(s.d)?`<ul>${s.d.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:esc(s.d||'');
   const rels=(s.rel&&s.rel.length)?`<div class="rels"><span class="rl-lbl">🔗 相关步骤：</span>${s.rel.map(r=>`<span class="rel" onclick="goto('${r.tab||tab}','${r.to}')">${esc(r.label)} ›</span>`).join('')}</div>`:'';
   const lnks=(s.links&&s.links.length)?`<div class="step-links">${s.links.map(linkChip).join('')}</div>`:'';
-  const qr=s.qr?`<div class="step-qr"><div class="th qr-th" data-cap="${esc(s.qrCap||'小程序码')}"><img src="${s.qr}" alt="${esc(s.qrCap||'小程序码')}" loading="lazy"><span class="mag">🔍 点击放大</span></div><div class="qr-txt">${esc(s.qrCap||'微信扫码进入小程序')}${s.qrSub?`<span class="qr-sub">${esc(s.qrSub)}</span>`:''}</div></div>`:'';
+  const qr=s.qr?`<div class="step-qr"><div class="th qr-th" data-cap="${esc(s.qrCap||'小程序码')}"><img src="${s.qr}" alt="${esc(s.qrCap||'小程序码')}" loading="lazy" decoding="async" onload="this.closest('.th').classList.add('ld')"><span class="sk">加载中…</span><span class="mag">🔍 点击放大</span></div><div class="qr-txt">${esc(s.qrCap||'微信扫码进入小程序')}${s.qrSub?`<span class="qr-sub">${esc(s.qrSub)}</span>`:''}</div></div>`:'';
   return `<div class="step" id="${m.id}-${i}">
     <div class="step-h"><span class="step-n">步骤 ${i+1}</span><h4 class="step-t">${esc(s.t)}</h4>${chip}</div>
     <div class="step-d">${desc}</div>${qr}${lnks}${rels}${stepImgs(m,s)}</div>`;
@@ -522,6 +527,7 @@ function switchTab(name){
   curTab=name; renderTabs();
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   $('#panel-'+name).classList.add('active');
+  markLoaded(); setTimeout(markLoaded,400);
   window.scrollTo({top:0,behavior:'smooth'});
 }
 function jumpStage(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
@@ -546,13 +552,15 @@ function spy(){
   panel.querySelectorAll('[data-toc]').forEach(a=>a.classList.toggle('active',a.dataset.toc===actMod));
 }
 let ticking=false;
-window.addEventListener('scroll',()=>{if(!ticking){requestAnimationFrame(()=>{spy();ticking=false;});ticking=true;}});
+function markLoaded(){document.querySelectorAll('.th:not(.ld)').forEach(t=>{const i=t.querySelector('img');if(i&&i.complete&&i.naturalWidth>0)t.classList.add('ld');});}
+window.addEventListener('load',markLoaded);
+window.addEventListener('scroll',()=>{if(!ticking){requestAnimationFrame(()=>{spy();markLoaded();ticking=false;});ticking=true;}});
 
 /* lightbox */
 let lbGroup=[],lbIdx=0;
 function openLB(el){
   const img=el.querySelector('img');if(!img)return;
-  $('#lbImg').src=img.src;
+  $('#lbImg').src=el.dataset.full||img.src;
   $('#lbCap').textContent=el.dataset.cap||'';
   const wrap=el.closest('.step-imgs')||el.closest('.gal');
   if(wrap){lbGroup=[...wrap.querySelectorAll('.th')];lbIdx=lbGroup.indexOf(el);}
