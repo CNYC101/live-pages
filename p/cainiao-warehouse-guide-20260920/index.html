@@ -36,6 +36,7 @@
   .tab-btn:hover{color:var(--brand)}
   .tab-btn.active{color:var(--brand);border-color:#cfe0ff}
   .tab-btn.active::after{content:"";position:absolute;left:14px;right:14px;bottom:-1px;height:3px;background:var(--brand);border-radius:3px}
+  .rec-badge{font-size:11px;font-weight:800;color:#fff;background:linear-gradient(135deg,#ff4d4f,#ff7875);border-radius:20px;padding:2px 9px;margin-left:2px;letter-spacing:.5px;box-shadow:0 2px 6px rgba(255,77,79,.35)}
 
   .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px 60px}
   .panel{display:none;background:var(--card);border:1px solid var(--line);border-radius:0 var(--radius) var(--radius) var(--radius);box-shadow:var(--shadow)}
@@ -164,8 +165,6 @@
       <div class="site-title">菜鸟云仓 · 商家全流程操作指南</div>
       <div class="site-sub">从注册到发货对账，一步一图跟着做</div>
     </div>
-    <div class="badge">图文整合版 v2</div>
-    <div class="draft-flag">结构待确认</div>
   </div>
 </header>
 
@@ -505,8 +504,8 @@ function renderFAQ(){
 
 /* ================= 交互 ================= */
 function renderTabs(){
-  const tabs=[{id:'pc',ic:'🖥️',l:'PC 版操作指南'},{id:'mp',ic:'📱',l:'小程序版操作指南'},{id:'faq',ic:'❓',l:'常见问题'}];
-  $('#tabs').innerHTML=tabs.map(t=>`<button class="tab-btn ${t.id===curTab?'active':''}" data-tab="${t.id}"><span class="em">${t.ic}</span>${t.l}</button>`).join('');
+  const tabs=[{id:'pc',ic:'🖥️',l:'PC 版操作指南'},{id:'mp',ic:'📱',l:'小程序版操作指南',rec:1,recTip:'小程序流程更简单，推荐优先使用；PC 端尚未简化'},{id:'faq',ic:'❓',l:'常见问题'}];
+  $('#tabs').innerHTML=tabs.map(t=>`<button class="tab-btn ${t.id===curTab?'active':''}" data-tab="${t.id}"><span class="em">${t.ic}</span>${t.l}${t.rec?`<span class="rec-badge" title="${esc(t.recTip)}">推荐</span>`:''}</button>`).join('');
 }
 function switchTab(name){
   curTab=name; renderTabs();
