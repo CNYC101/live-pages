@@ -428,6 +428,10 @@ const IMAGES={
 /* ================= 渲染 ================= */
 let curTab='pc';
 const $=s=>document.querySelector(s);
+/* 图片基址：留空=相对路径(GitHub Pages)；填国内可访问的 OSS/CDN 前缀则整站图片走该域名，
+   例如 https://your-bucket.oss-cn-hangzhou.aliyuncs.com/cainiao-guide （末尾不要带斜杠） */
+const IMG_BASE='';
+function iu(p){return IMG_BASE&&!/^https?:/i.test(p)?IMG_BASE.replace(/\/+$/,'')+'/'+p.replace(/^\/+/,''):p;}
 function esc(t){return (t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function stg(id){return STAGES.find(s=>s.id===id);}
 
@@ -441,7 +445,7 @@ function stepImgs(m,s){
   const thumbs=cells.map((c,j)=>{
     const cap=`${m.title} · ${s.t} · 图 ${c.gi}（${j+1}/${n}）`;
     const full=c.src, thumb=c.src.replace(/^assets\//,'assets/t/');
-    return `<div class="th" data-cap="${esc(cap)}" data-full="${full}"><img src="${thumb}" alt="${esc(cap)}" loading="lazy" decoding="async" onload="this.closest('.th').classList.add('ld')" onerror="this.closest('.th').style.display='none'"><span class="sk">加载中…</span><span class="n">${c.gi}</span><span class="mag">🔍 点击放大</span></div>`;
+    return `<div class="th" data-cap="${esc(cap)}" data-full="${iu(full)}"><img src="${iu(thumb)}" alt="${esc(cap)}" loading="lazy" decoding="async" onload="this.closest('.th').classList.add('ld')" onerror="this.closest('.th').style.display='none'"><span class="sk">加载中…</span><span class="n">${c.gi}</span><span class="mag">🔍 点击放大</span></div>`;
   }).join('');
   return `<div class="step-imgs">${thumbs}</div>`;
 }
@@ -449,7 +453,7 @@ function linkChip(l){
   const ext=/^https?:/i.test(l.u);
   const attrs=ext?'target="_blank" rel="noopener"':(l.dl?'download':'');
   const ic=l.dl?'⬇️':(ext?'🔗':'📎');
-  return `<a class="lnk" href="${l.u}" ${attrs}>${ic} ${esc(l.t)}</a>`;
+  return `<a class="lnk" href="${iu(l.u)}" ${attrs}>${ic} ${esc(l.t)}</a>`;
 }
 function stepHTML(m,s,i,tab){
   let chip='';
@@ -458,7 +462,7 @@ function stepHTML(m,s,i,tab){
   const desc=Array.isArray(s.d)?`<ul>${s.d.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:esc(s.d||'');
   const rels=(s.rel&&s.rel.length)?`<div class="rels"><span class="rl-lbl">🔗 相关步骤：</span>${s.rel.map(r=>`<span class="rel" onclick="goto('${r.tab||tab}','${r.to}')">${esc(r.label)} ›</span>`).join('')}</div>`:'';
   const lnks=(s.links&&s.links.length)?`<div class="step-links">${s.links.map(linkChip).join('')}</div>`:'';
-  const qr=s.qr?`<div class="step-qr"><div class="th qr-th" data-cap="${esc(s.qrCap||'小程序码')}"><img src="${s.qr}" alt="${esc(s.qrCap||'小程序码')}" loading="lazy" decoding="async" onload="this.closest('.th').classList.add('ld')"><span class="sk">加载中…</span><span class="mag">🔍 点击放大</span></div><div class="qr-txt">${esc(s.qrCap||'微信扫码进入小程序')}${s.qrSub?`<span class="qr-sub">${esc(s.qrSub)}</span>`:''}</div></div>`:'';
+  const qr=s.qr?`<div class="step-qr"><div class="th qr-th" data-cap="${esc(s.qrCap||'小程序码')}"><img src="${iu(s.qr)}" alt="${esc(s.qrCap||'小程序码')}" loading="lazy" decoding="async" onload="this.closest('.th').classList.add('ld')"><span class="sk">加载中…</span><span class="mag">🔍 点击放大</span></div><div class="qr-txt">${esc(s.qrCap||'微信扫码进入小程序')}${s.qrSub?`<span class="qr-sub">${esc(s.qrSub)}</span>`:''}</div></div>`:'';
   return `<div class="step" id="${m.id}-${i}">
     <div class="step-h"><span class="step-n">步骤 ${i+1}</span><h4 class="step-t">${esc(s.t)}</h4>${chip}</div>
     <div class="step-d">${desc}</div>${qr}${lnks}${rels}${stepImgs(m,s)}</div>`;
