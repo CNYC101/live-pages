@@ -430,7 +430,7 @@ let curTab='pc';
 const $=s=>document.querySelector(s);
 /* 图片基址：留空=相对路径(GitHub Pages)；填国内可访问的 OSS/CDN 前缀则整站图片走该域名，
    例如 https://your-bucket.oss-cn-hangzhou.aliyuncs.com/cainiao-guide （末尾不要带斜杠） */
-const IMG_BASE='';
+const IMG_BASE='https://cnyc-guide-assets-0923.oss-cn-beijing.aliyuncs.com';
 function iu(p){return IMG_BASE&&!/^https?:/i.test(p)?IMG_BASE.replace(/\/+$/,'')+'/'+p.replace(/^\/+/,''):p;}
 function esc(t){return (t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function stg(id){return STAGES.find(s=>s.id===id);}
