@@ -176,7 +176,7 @@ let lastPool=null, lastHigh=false, curTab=0;
     box.appendChild(l);
   });
   box.addEventListener('change',e=>{if(e.target.name==='tier'){tier=+e.target.value;refresh();}});
-  document.querySelectorAll('input[name=ship]').forEach(r=>r.addEventListener('change',()=>{ /* 需重新查询以切换仓池 */ }));
+  document.querySelectorAll('input[name=ship]').forEach(r=>r.addEventListener('change',()=>{refresh();}));
 })();
 
 // weight input: numbers only, max 10
@@ -247,15 +247,20 @@ function distKm(a,b){
 }
 function ship(){return document.querySelector('input[name=ship]:checked').value;}
 
-document.getElementById('go').onclick=()=>{
-  const err=document.getElementById('err');err.style.display='none';
-  if(!sel){err.textContent='请先选择查询城市';err.style.display='block';return;}
+function computePool(){
   const high=ship()==='high';
   let pool=WH.map(w=>({...w,d:distKm(sel,{lng:w.lng,lat:w.lat})}));
   if(high)pool=pool.filter(w=>w.high标);
   pool.sort((a,b)=>a.d-b.d);
+  return {pool,high};
+}
+
+document.getElementById('go').onclick=()=>{
+  const err=document.getElementById('err');err.style.display='none';
+  if(!sel){err.textContent='请先选择查询城市';err.style.display='block';return;}
+  const {pool,high}=computePool();
   curTab=0;
-  showResult(pool,high);
+  showResult(pool,high,true);
 };
 
 function brandsFor(w,high){
@@ -317,10 +322,10 @@ function paneHtml(w,i,high){
   h+=`<a class="quotebtn" href="${QUOTE_URL}" target="_blank" rel="noopener">查询详细报价 →</a>`;
   return h;
 }
-function showResult(pool,high){
+function showResult(pool,high,scroll){
   lastPool=pool;lastHigh=high;
   const r=document.getElementById('result');
-  if(!pool.length){r.innerHTML=`<div class="empty">暂无符合条件的云仓</div>`;r.classList.add('show');return;}
+  if(!pool.length){r.innerHTML=`<div class="empty">暂无符合条件的云仓</div>`;r.classList.add('show');if(scroll)r.scrollIntoView({behavior:'smooth',block:'start'});return;}
   const tops=pool.slice(0,3);
   if(curTab>=tops.length)curTab=0;
   let html='';
@@ -328,7 +333,7 @@ function showResult(pool,high){
   html+=`<div class="tabs">`+tops.map((w,i)=>`<button class="tab ${i===curTab?'active':''}" data-i="${i}">${i===0?'推荐':'备选'+i} · ${w.key}仓<span class="td">约 ${Math.round(w.d)} km</span></button>`).join('')+`</div>`;
   html+=tops.map((w,i)=>`<div class="pane ${i===curTab?'show':''}" data-p="${i}">`+paneHtml(w,i,high)+`</div>`).join('');
   r.innerHTML=html;r.classList.add('show');
-  r.scrollIntoView({behavior:'smooth',block:'start'});
+  if(scroll)r.scrollIntoView({behavior:'smooth',block:'start'});
 }
 document.getElementById('result').addEventListener('click',e=>{
   const t=e.target.closest('.tab');
@@ -337,7 +342,8 @@ document.getElementById('result').addEventListener('click',e=>{
   document.querySelectorAll('#result .tab').forEach(b=>b.classList.toggle('active',+b.dataset.i===curTab));
   document.querySelectorAll('#result .pane').forEach(p=>p.classList.toggle('show',+p.dataset.p===curTab));
 });
-function refresh(){if(lastPool)showResult(lastPool,lastHigh);}
+// 切换单量档/快递类型/重量时原地刷新结果，不滚动页面；滚动只在点击"查询"时发生
+function refresh(){if(lastPool){const {pool,high}=computePool();showResult(pool,high,false);}}
 </script>
 </body>
 </html>
