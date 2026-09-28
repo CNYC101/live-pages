@@ -89,8 +89,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 .fee .c.total .n{color:#fff}
 .fee .c.storage .n{color:var(--green)}
 /* quote button */
-.quotebtn{display:block;width:100%;margin-top:18px;padding:13px;text-align:center;font-size:15px;font-weight:800;color:var(--blue-d);background:#eef4ff;border:1.5px solid #bcd6ff;border-radius:12px;text-decoration:none;transition:.15s}
+.btnrow{display:flex;gap:12px;margin-top:18px}
+.quotebtn{flex:1;padding:13px;text-align:center;font-size:15px;font-weight:800;color:var(--blue-d);background:#eef4ff;border:1.5px solid #bcd6ff;border-radius:12px;text-decoration:none;transition:.15s;cursor:pointer}
 .quotebtn:hover{background:#dceaff;border-color:var(--blue)}
+.backbtn{background:#fff}
+.backbtn:hover{background:#eef4ff}
 /* high标 notice */
 .notice{background:var(--amberbg);border:1px solid #ffe0b0;color:var(--amber);border-radius:12px;padding:12px 16px;font-size:13.5px;font-weight:600;margin-bottom:16px;display:none;align-items:center;gap:8px}
 .notice.show{display:flex}
@@ -319,7 +322,7 @@ function paneHtml(w,i,high){
   </div>`;
   h+=`<div class="fee-title">费用汇总 <span class="tier">· ${w.key}｜${tierName}｜${high?'高标快递':'标准快递'}${weight?'｜'+weight+'KG':''}</span></div>`;
   h+=feeCard(w.key,high);
-  h+=`<a class="quotebtn" href="${QUOTE_URL}" target="_blank" rel="noopener">查询详细报价 →</a>`;
+  h+=`<div class="btnrow"><a class="quotebtn" href="${QUOTE_URL}" target="_blank" rel="noopener">查询详细报价 →</a><button class="quotebtn backbtn" type="button">返回查询 ↑</button></div>`;
   return h;
 }
 function showResult(pool,high,scroll){
@@ -336,6 +339,7 @@ function showResult(pool,high,scroll){
   if(scroll)r.scrollIntoView({behavior:'smooth',block:'start'});
 }
 document.getElementById('result').addEventListener('click',e=>{
+  if(e.target.closest('.backbtn')){window.scrollTo({top:0,behavior:'smooth'});return;}
   const t=e.target.closest('.tab');
   if(!t)return;
   curTab=+t.dataset.i;
