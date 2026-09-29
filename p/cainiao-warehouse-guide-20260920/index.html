@@ -126,6 +126,16 @@
   .mod-login{margin:6px 0 4px}
   .mod-login .lnk{font-size:13.5px;padding:8px 16px;background:var(--brand);color:#fff;border-color:var(--brand);box-shadow:var(--shadow)}
   .mod-login .lnk:hover{background:var(--brand-d);border-color:var(--brand-d)}
+  /* 功能对照表 */
+  .mod-table{margin:10px 0 4px;overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:#fff}
+  .mod-table table{border-collapse:collapse;width:100%;font-size:14px;color:var(--ink)}
+  .mod-table th,.mod-table td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+  .mod-table thead th{background:#f2f7ff;color:#274a86;font-weight:800;font-size:13px;letter-spacing:.02em;position:sticky;top:0}
+  .mod-table tbody tr:nth-child(even) td{background:#fafcff}
+  .mod-table tbody tr:last-child td{border-bottom:none}
+  .mod-table td.yes{color:#1a7f4f;font-weight:700}
+  .mod-table td.no{color:#c94343;font-weight:700}
+  .mod-table td.note{color:var(--ink-3);font-size:13px}
   .step-qr{display:flex;align-items:center;gap:16px;margin-top:12px;background:linear-gradient(90deg,#f2f7ff,#f7faff);border:1px solid #d7e6ff;border-radius:12px;padding:14px 16px}
   .step-qr .qr-th{width:150px;flex:0 0 150px;aspect-ratio:1/1;background:#fff}
   .step-qr .qr-txt{font-size:14px;color:#274a86;font-weight:700}
@@ -357,36 +367,138 @@ const GUIDE = {
   },
   mp:{
     modules:[
-      {id:'s1',stage:'st1',ic:'🔑',title:'登录小程序',desc:'手机端第一步。',steps:[
-        {t:'进入并登录小程序',d:['首页飘条 / 「我的」进入；快捷登录自动取本机手机号，也可其他手机号验证码登录。','⚠️ 请使用主账号注册的手机号登录。'],qr:'assets/mp_qrcode.png',qrCap:'微信扫码，直接进入「菜鸟云仓」小程序',qrSub:'用手机微信「扫一扫」或长按图片识别二维码',img:[1,2,3],rel:[{to:'s2',label:'子账号登录'}]},
+      {id:'s0',stage:'st1',ic:'🎁',title:'销售邀请你 · 扫码领券入驻',desc:'如果你已经通过企业微信联系了销售，销售会发一张「菜鸟云仓」小程序卡片给你，按下面几步点开、领券、注册签约即可。',
+        note:'首发礼包按手机号领取：同一个手机号在营销页领过一次后，小程序里不能再领第二次；已注册的老手机号可直接登录查看你的券。',
+        steps:[
+          {t:'点开销售发来的小程序卡片',d:['在企微聊天里点销售发来的「菜鸟云仓」卡片，无需登录即可直达领券页面。'],img:[1,2,3,4],rel:[{to:'s1',label:'微信搜索直接进入'}]},
+          {t:'点击「立即入驻 享专属福利」',d:['在领券页点按钮，进入注册登录。'],img:[5,6,7],rel:[{to:'s1',label:'登录方式说明'}]},
+          {t:'完成签约（选云仓位置）',d:['选择就近的云仓位置；按销售给你的姓名/工号选择"有销售跟进"，方便对方收到你的入驻信息。'],img:[8,9]},
+          {t:'领券成功，开始首次发货',d:['签约后在"我的-优惠券"查看券，或直接新建货品开始首发。'],img:[10]},
+          {t:'已注册老手机号：直接登录查看券',d:['用原注册手机号登录即可看到你的券；若券已过期未用，联系你的对接销售帮你重新发放。'],img:[11,12]},
+        ]},
+      {id:'s1',stage:'st1',ic:'🔑',title:'登录与注册',desc:'没有销售邀请时，你也可以自己进入小程序注册。',steps:[
+        {t:'微信搜索「菜鸟云仓」进入小程序',d:['微信首页点搜索，输入"菜鸟云仓"即可打开小程序。'],qr:'assets/mp_qrcode.png',qrCap:'微信扫码，直接进入「菜鸟云仓」小程序',qrSub:'用手机微信「扫一扫」或长按图片识别二维码',img:[1]},
+        {t:'手机号登录（微信快捷 / 手机号+验证码）',d:['优先用"微信快捷登录"，自动带出微信绑定的手机号；也可切"手机号+验证码"手动输入。','⚠️ 请使用主账号注册的手机号登录，子账号请先在 PC 端创建并激活。'],img:[2,3,4,5],rel:[{to:'s2',label:'子账号登录'},{to:'m1',label:'PC·创建子账号',tab:'pc'}]},
       ]},
-      {id:'s2',stage:'st1',ic:'👥',title:'子账号登录',desc:'团队成员用子账号登录。',steps:[
-        {t:'子账号登录操作',d:['（源文档为操作视频，暂以文字说明，视频 / 截图待补）'],todo:1},
+      {id:'s2',stage:'st1',ic:'👥',title:'子账号登录',desc:'团队成员用主账号创建的子账号登录。',steps:[
+        {t:'用子账号手机号 + 验证码登录',d:['在 PC 端"新增子账号 → 绑定角色 → 激活"之后，员工用该手机号在小程序"手机号+验证码"登录即可，权限由 PC 端配置的角色决定。','（源文档此处为操作视频，视频 / 详细截图待补）'],todo:1,rel:[{to:'m1',label:'PC·创建子账号',tab:'pc'},{to:'s1',label:'小程序登录'}]},
       ]},
-      {id:'s3',stage:'st2',ic:'📦',title:'货品管理',desc:'新建 / 编辑单个或组合货品。',steps:[
-        {t:'新增 / 编辑货品',d:['「我的 - 货品」或首页入库单直接新增。','维护图片、名称，点【识图】自动识别；无条码可选【实物不带条码】系统生成。'],img:[1,2,3,4,5],rel:[{to:'s4',label:'商货品绑定'}]},
-        {t:'打印条码 / 批量上传',d:['这两项目前小程序暂不支持，需到 PC 端完成。'],pc:true,pcTarget:{tab:'pc',module:'m4'}},
+      {id:'s3',stage:'st2',ic:'📦',title:'新增货品 · 含包装方案',desc:'支持识图 / 扫码 / 手动填写；创建货品同时选择包装方式，也支持创建后再修改。',steps:[
+        {t:'进入云仓货品列表',d:['底部「我的 - 云仓货品」，进入货品管理列表页。'],img:[1]},
+        {t:'点击新增货品',d:['选择新增类型「货品」。'],img:[2,3]},
+        {t:'填写货品信息（识图 / 扫码 / 手动）',d:['拍照或上传货品图片 → 点【识图】，自动识别货品名称、条码；也支持【扫码】录入条码。','手动补充保质期、包装方案等字段。'],img:[4,5,6,7]},
+        {t:'选择包装方案',d:['菜鸟包材 / 自送包材 / 无需包材 三选一，只需选材质、不必选尺寸；不选时系统默认菜鸟纸箱并计费。','支持创建后再回来修改。'],img:[8],rel:[{to:'m4',label:'PC·包装方案',tab:'pc'}]},
       ]},
-      {id:'s4',stage:'st2',ic:'🔗',title:'商货品绑定',desc:'「我的 - 商品」把商品与货品关联。',steps:[
-        {t:'绑定 / 打标',d:['绑定货品：关联仓库货品；打标：标记自发货（不入云仓的品）；标记虚拟品。'],img:[1,2],rel:[{to:'s3',label:'货品管理'},{to:'s5',label:'入库操作'}]},
+      {id:'scb',stage:'st2',ic:'🧺',title:'组合货品',desc:'由多个子件组成的套装 SKU，支持查看和编辑。',steps:[
+        {t:'新增类型选「组合货品」',d:['在货品列表点新增，切换类型为「组合货品」。'],img:[1,2]},
+        {t:'填写组合名称 + 添加子件',d:['输入组合货品名称 → 添加子件（可按名称 / 编码 / 条码搜索已有普通货品）。'],img:[3,4]},
+        {t:'提交创建组合货品',d:['确认子件与数量后提交；后续售卖 SKU 用组合品绑定即可。'],img:[5,6],rel:[{to:'s3',label:'先建普通货品'},{to:'s4',label:'商货品绑定'}]},
       ]},
+      {id:'sed',stage:'st2',ic:'🔍',title:'查看 / 修改货品',desc:'库存维度或货品维度都可以查看与调整。',steps:[
+        {t:'库存管理页查看库存状态',d:['按货品名称 / 条码 / 编码搜索；按"已缺货 / 即将缺货 / 库存充足 / 滞销"标签筛选；也可按仓库、库存状态（良品 / 残次品）过滤。'],img:[1,2]},
+        {t:'货品列表页修改信息',d:['「我的 - 云仓货品」进入列表，选中货品即可修改名称、图片、保质期、包装方案等。'],img:[3,4],rel:[{to:'s3',label:'新增货品'}]},
+      ]},
+      {id:'s4',stage:'st2',ic:'🔗',title:'商货品绑定（三类）',desc:'把线上商品与云仓货品关联，分三种处理方式。',
+        note:'三种货品处理方式：① 准备在菜鸟仓发货的品 → 绑定云仓货品；② 商家自己发货的品 → 打标"自发货"；③ 礼品卡 / 积分等虚拟品 → 标记"虚拟品"。同订单里菜鸟发货 + 自发货 / 虚拟品混合时，系统自动拆单，只把菜鸟发货的部分下发到仓。',
+        steps:[
+          {t:'菜鸟仓发的品 · 关联仓库货品',d:['在「待处理 - 商品」查看未绑定商品；搜索商品名称 / 编码 → 选「关联仓库货品」→ 选择要绑定的货品。'],img:[1,2],rel:[{to:'s3',label:'货品管理'}]},
+          {t:'商家自发货 · 打标',d:['把不入云仓、由你自己发的商品标记为「自发货」，系统识别后不会再下发到仓。'],img:[3]},
+          {t:'虚拟品 · 标记',d:['礼品卡、积分等无需发货的品，标记为「虚拟品」。'],img:[4]},
+        ]},
+      {id:'sst',stage:'st2',ic:'🏬',title:'店铺授权（跳转 PC 完成）',desc:'小程序可复制授权地址，实际授权操作需在电脑端 CNBP 完成。',
+        note:'支持淘宝 / 天猫、1688、抖音、快手、小红书、微信视频号 / 小店、京东、淘工厂、有赞等多平台。',
+        steps:[
+          {t:'进入店铺管理，复制授权地址',d:['首页 - 新建店铺 → 复制授权地址（https://b.cainiao.com/.../platformstore）。'],img:[1,2],pc:true,pcTarget:{tab:'pc',module:'m3'}},
+          {t:'在电脑浏览器打开链接 · 登录 CNBP 授权',d:['粘贴链接到电脑浏览器 → 登录菜鸟 CNBP → 选择平台渠道 → 完成服务市场订购 / 授权。'],img:[3],pc:true,pcTarget:{tab:'pc',module:'m3'}},
+        ]},
       {id:'pddm',imgKey:'pdd',stage:'st2',ic:'🧩',title:'拼多多店铺 · 管易云对接',desc:'拼多多同样不支持 CNBP 直接对接，需单独购买管易云 ERP；管易云为 PC 网页系统，建品 / 绑货 / 授权 / 铺货等完整操作请在电脑端进行，流程与 PC 版一致。',
         note:'订单相关操作只在管易云进行（如更换货品），尽量不要在菜鸟 CNBP 操作以免客诉；订单拦截在 CNBP 处理。',noteWarn:1,
         note2:'订单流程：店铺拉单到管易云 → 管易云审核 → 推送到 CNBP → CNBP 审核 → 仓库发货 → 出库回传。',
         links:PDD_LINKS, steps:PDD_STEPS},
-      {id:'s5',stage:'st3',ic:'🗒️',title:'入库操作',desc:'首页新建入库单。',steps:[
-        {t:'新建入库单',d:['1) 选择 / 新建货品　2) 维护送货信息（自送 / 物流、箱数）　3) 打印箱唛 & 入库单。','已在 PC 建过的入库单，可在小程序改送货方式、补箱数后打印箱唛。'],img:[1,2,3,4],rel:[{to:'s3',label:'货品管理'},{to:'m5',label:'PC·建入库单',tab:'pc'}]},
+      {id:'sctc',stage:'st2',ic:'👤',title:'联系人 · 仓库维护',desc:'备货寄件、退供收货所需的联系人信息，以及菜鸟仓库列表。',steps:[
+        {t:'维护联系人（寄件 / 收货）',d:['「我的 - 联系人 / 仓库」维护：备货到仓的寄件联系人；退供出库的收货联系人。'],img:[1,2,3]},
+        {t:'查看菜鸟仓库信息',d:['「我的 - 仓库」列目前你在用的启用状态仓库；新建入库单选仓时从这里取。'],img:[4],rel:[{to:'s5',label:'新建入库单'}]},
       ]},
-      {id:'s6',stage:'st4',ic:'✅',title:'审核订单',desc:'下方菜单「订单」。',steps:[
-        {t:'查看并处理异常单',d:['处理缺货 / 未绑定货品等异常；支持手动审核。'],img:[1,2],rel:[{to:'s4',label:'商货品绑定'}]},
-        {t:'编辑订单',d:['点击具体订单进行编辑。'],img:[3]},
+      {id:'s5',stage:'st3',ic:'🗒️',title:'新建入库单',desc:'选仓 → 选品 → 填数量 → 提交（首次需绑定支付宝）。',
+        note:'备货入库必须满足入库规范：货品有条码（无则可自贴或仓代贴）、外箱有箱唛、SKU 物理隔离，否则仓库有权拒收 / 退回。',noteWarn:1,
+        steps:[
+          {t:'点击新建入库单',d:['首页或库存页，进入新建入库单。'],img:[1]},
+          {t:'首次绑定支付宝授权',d:['点「去授权」→ 复制签约链接 → 在浏览器打开 → 用支付宝扫码 → 开通支付宝授权。','后续费用会自动划扣，个人 / 企业支付宝均可，需为淘宝会员绑定的支付宝。'],img:[2,3,4,5]},
+          {t:'选择 / 新建货品',d:['选择已有货品：搜索名称 / 条码 → 点添加；也可现场拍照识图创建新品，填保质期 / 包装方案 / 入库数量。'],img:[6,7,8]},
+          {t:'确认入库件数',d:['核对每个货品的入库数量，避免收货差异。'],img:[9]},
+          {t:'选择送货仓库与送货方式',d:['仓库只能选已启用的（新增仓库需去 PC 端"我的 - 仓库"维护）。','送货方式：快递（填单号 + 预计到仓日期，无需预约）；物流（填箱数 / 车牌 / 司机电话 / 送货日期，需预约）；自送（填箱数 + 预计到仓日期，需预约）。'],img:[10,11],rel:[{to:'sapt',label:'预约入库'}]},
+          {t:'提交并查看入库单详情',d:['提交后进入入库单详情页，可直接复制送货清单 / 箱唛的下载链接。'],img:[12],rel:[{to:'sprint',label:'打印箱唛'}]},
+        ]},
+      {id:'sprint',stage:'st3',ic:'🖨️',title:'打印箱唛 & 送货单',desc:'复制下载链接，用电脑连打印机直接打印。',steps:[
+        {t:'入库单创建成功页 · 复制链接',d:['创建成功弹窗里，点复制送货清单和箱唛的下载链接。'],img:[1]},
+        {t:'入库单列表 · 再次进入复制',d:['库存 - 入库单进入列表，点待送货的入库单 → 进入详情 → 复制下载链接。'],img:[2,3]},
+        {t:'发到电脑浏览器打印',d:['把链接通过微信"文件传输助手"发到电脑，浏览器打开即可连接打印机出箱唛与送货单。'],img:[4]},
       ]},
-      {id:'s7',stage:'st4',ic:'🧾',title:'查看账单',desc:'首页「账单」。',steps:[
-        {t:'查看账单明细',d:['按月查看费用明细；开票等完整账单能力需在 PC 查看。'],img:[1,2],pc:true,pcTarget:{tab:'pc',module:'m8'}},
+      {id:'sapt',stage:'st3',ic:'📅',title:'预约入库',desc:'物流 / 自送需要提前预约；快递无需预约。',steps:[
+        {t:'待处理入库单点「预约」',d:['首页"待处理 - 入库单"卡片直接点预约。'],img:[1]},
+        {t:'或从入库单列表预约',d:['库存 - 入库单列表 → 点入库单 → 点预约。'],img:[2,3]},
+        {t:'选增值服务与预约时间',d:['按需选代贴条码 / 装卸 / 二次理货等增值服务，选好到仓时间（前后一天均可收货）即可。'],img:[4],rel:[{to:'svas',label:'增值服务'}]},
       ]},
-      {id:'s8',stage:'st4',ic:'🎧',title:'服务工单',desc:'首页「服务工单」。',steps:[
-        {t:'处理工单',d:['本期暂不能新建工单，但可对已有工单进行处理与跟进。'],img:[1,2,3]},
+      {id:'slog',stage:'st3',ic:'🚚',title:'查看入库物流 & 进度',desc:'入库单卡片 → 详情 → 物流轨迹。',steps:[
+        {t:'库存 - 入库单列表',d:['找到你的入库单。'],img:[1]},
+        {t:'点卡片进入详情',d:['看到货品、数量、送货方式等信息。'],img:[2]},
+        {t:'查看物流进度',d:['快递单号已回传的，展示最新物流轨迹与预计到货。'],img:[3],rel:[{to:'s6',label:'审单推发货'}]},
       ]},
+      {id:'svas',stage:'st3',ic:'✨',title:'增值服务',desc:'代贴条码 / 装卸 / 二次理货 / 更换包装 / 其他，支持两种创建方式。',steps:[
+        {t:'入口：库存 - 增值单 - 添加',d:['小程序底部"库存"→ 上方「增值单」→ 右上角加号。'],img:[1]},
+        {t:'按入库单创建（默认）',d:['提前在入库单页复制 LBX 单号 → 选服务类型 + 服务仓库 → 输入入库单号查询货品 → 只勾选需要增值的那一部分 → 提交，直接下发到仓。'],img:[2,3,4,5]},
+        {t:'按货品创建（by 仓 by 品）',d:['选服务 + 服务仓 → 添加货品（当前库存只做展示，0 库存也可提前创建）→ 提交到仓。'],img:[6],rel:[{to:'s3',label:'货品管理'}]},
+        {t:'查看服务进度',d:['库存 - 增值单：查看仓库作业进度、已作业明细。'],img:[7,8]},
+      ]},
+      {id:'s6',stage:'st4',ic:'🛒',title:'订单处理',desc:'首页订单概览 + 订单卡片详情。',
+        note:'目前新商家默认全部自动审核；如希望改为手工审核，或"普通订单自动审核 + 有备注订单手工审核"，请联系你的对接小二配置。',
+        steps:[
+          {t:'首页 · 订单概览',d:['首页订单概览看今日单量、异常数、发货进度。'],img:[1]},
+          {t:'点订单卡片 · 查看订单详情',d:['订单页点某张卡片进入详情，可看商品、收发件人、金额、备注、状态。'],img:[2,3]},
+        ]},
+      {id:'smo',stage:'st4',ic:'➕',title:'手动创建发货单',desc:'首页快捷入口新建发货单（补发、非平台订单等场景）。',steps:[
+        {t:'首页 - 快捷入口 - 新建发货单',d:['进入新建发货单页面。'],img:[1]},
+        {t:'填写收发货信息',d:['发货：必填发货仓库、店铺；选填备注、旗帜。','收货：必填省市区详细地址、收件人姓名、电话。'],img:[2,3]},
+        {t:'填写货品与数量',d:['只显示所选仓库有可用库存的货品；支持多选、可修改每个货品的数量。'],img:[4,5]},
+        {t:'确认订单',d:['核对收发信息、货品清单与数量后提交。'],img:[6],rel:[{to:'m7',label:'PC·订单推送到仓',tab:'pc'}]},
+      ]},
+      {id:'s7',stage:'st4',ic:'🧾',title:'查看账单 · 开票',desc:'首页或"我的"进入账单，月度 / 明细分开看。',
+        note:'小程序暂不支持账单下载与开票，需要下载账单或开发票请到 PC 端"金掌柜"。',
+        steps:[
+          {t:'账单入口',d:['首页「查看账单」或"我的 - 我的账单"。'],img:[1,2]},
+          {t:'查看月度账单',d:['按月查看费用汇总。'],img:[3]},
+          {t:'查看明细账单',d:['按单据维度查看每笔费用明细。'],img:[4]},
+          {t:'开票（跳 PC）',d:['小程序仅支持查看发票，下载和开票请在 PC 端"服务 - 金掌柜"完成。'],img:[5],pc:true,pcTarget:{tab:'pc',module:'m8'}},
+        ]},
+      {id:'srt',stage:'st4',ic:'↩️',title:'退供出库',desc:'滞销 / 破损 / 退回供应商的品，从仓库出库并扣减库存。',steps:[
+        {t:'入口：库存 - 出库单 - 右上角 ➕',d:['进入新建出库单。'],img:[1,2]},
+        {t:'选择仓库与出库类型',d:['出库类型：退供出 / 报废出。'],img:[3]},
+        {t:'选择出库货品',d:['按名称 / 条码 / 编码搜索所选仓库有库存的货品。'],img:[4]},
+        {t:'填写件数，提交出库单',d:['提交后单据下发到仓库；仓库接单后状态变"待出库"。'],img:[5]},
+        {t:'出库单创建成功 · 查看详情',d:['可在出库单详情页查看货品 / 件数 / 状态。'],img:[6]},
+        {t:'查看退供进度',d:['列表卡片右上显示状态：待出库（仓库还没作业）/ 已出库（拣出，商家自提）/ 已取消（作业前撤单）。','商家自行安排物流 / 快递到仓库提货，仓库只负责按单拣出。'],img:[7,8]},
+        {t:'拦截退供单',d:['"待出库"状态的出库单可拦截：进列表 → 取消 → 二次确认。'],img:[9,10]},
+      ]},
+      {id:'stable',stage:'st4',ic:'🧭',title:'PC 与小程序 · 功能对照',desc:'日常操作小程序即可完成，标注 ⚠️ 的能力仍需去 PC。',
+        note:'看到橙色「需在 PC 端完成」标签，点一下即跳到 PC 版对应模块。',
+        steps:[],
+        table:{
+          head:['功能模块','PC 端','小程序端','备注'],
+          rows:[
+            ['商家签约','✅','✅',''],
+            ['店铺授权','✅ 全平台','❌','小程序仅复制授权地址，实际订购 / 授权跳 PC'],
+            ['货品管理','✅ 完整','✅','包装方案、组合货品均支持'],
+            ['商货品绑定','✅','✅','菜鸟发货 / 自发货 / 虚拟品三类'],
+            ['包装方案','✅','✅','创建货品时同步选择，也可创建后修改'],
+            ['备货入库','✅','✅','含新建入库单、预约入库、打印箱唛'],
+            ['推单发货','✅','✅','默认自动审核，可切换手工审核'],
+            ['增值服务','✅','✅','代贴条码 / 装卸 / 二次理货 / 更换包装 / 其他'],
+            ['结算账单','✅ 完整','🟡 90%','小程序查看为主，下载与开票走 PC'],
+            ['退供出库','✅','✅','支持拦截'],
+            ['打印条码 / 批量上传','✅','❌','需去 PC 商货品模块'],
+            ['子账号管理','✅','❌','先在 PC 创建并激活，员工在小程序登录'],
+          ]
+        }},
     ]
   }
 };
@@ -416,13 +528,23 @@ const IMAGES={
   "m9":["assets/m9_1.jpg","assets/m9_2.jpg","assets/m9_3.jpg","assets/m9_4.jpg","assets/m9_5.jpg"],
   "m10":["assets/m10_1.jpg","assets/m10_2.jpg","assets/m10_3.jpg","assets/m10_4.jpg","assets/m10_5.jpg","assets/m10_6.jpg","assets/m10_7.jpg","assets/m10_8.jpg"],
   "pdd":["assets/pdd_1.jpg","assets/pdd_2.jpg","assets/pdd_3.jpg","assets/pdd_4.jpg","assets/pdd_5.jpg","assets/pdd_6.jpg","assets/pdd_7.jpg","assets/pdd_8.jpg","assets/pdd_9.jpg","assets/pdd_10.jpg","assets/pdd_11.jpg","assets/pdd_12.jpg","assets/pdd_13.jpg","assets/pdd_14.jpg","assets/pdd_15.jpg","assets/pdd_16.jpg","assets/pdd_17.jpg","assets/pdd_18.jpg","assets/pdd_19.jpg","assets/pdd_20.jpg","assets/pdd_21.jpg","assets/pdd_22.jpg","assets/pdd_23.jpg","assets/pdd_24.jpg","assets/pdd_25.jpg","assets/pdd_26.jpg","assets/pdd_27.jpg","assets/pdd_28.jpg","assets/pdd_29.jpg","assets/pdd_30.jpg","assets/pdd_31.jpg","assets/pdd_32.jpg","assets/pdd_33.jpg","assets/pdd_34.jpg","assets/pdd_35.jpg","assets/pdd_36.jpg","assets/pdd_37.jpg","assets/pdd_38.jpg","assets/pdd_39.jpg","assets/pdd_40.jpg","assets/pdd_41.jpg","assets/pdd_42.jpg","assets/pdd_43.jpg","assets/pdd_44.jpg","assets/pdd_45.jpg","assets/pdd_46.jpg","assets/pdd_47.jpg","assets/pdd_48.jpg","assets/pdd_49.jpg","assets/pdd_50.jpg","assets/pdd_51.jpg","assets/pdd_52.jpg","assets/pdd_53.jpg","assets/pdd_54.jpg"],
-  "s1":["assets/s1_1.jpg","assets/s1_2.jpg","assets/s1_3.jpg"],
-  "s3":["assets/s3_1.jpg","assets/s3_2.jpg","assets/s3_3.jpg","assets/s3_4.jpg","assets/s3_5.jpg"],
-  "s4":["assets/s4_1.jpg","assets/s4_2.jpg"],
-  "s5":["assets/s5_1.jpg","assets/s5_2.jpg","assets/s5_3.jpg","assets/s5_4.jpg"],
-  "s6":["assets/s6_1.jpg","assets/s6_2.jpg","assets/s6_3.jpg"],
-  "s7":["assets/s7_1.jpg","assets/s7_2.jpg"],
-  "s8":["assets/s8_1.jpg","assets/s8_2.jpg","assets/s8_3.jpg"]
+  "s0":["assets/mp/410de0e8.png","assets/mp/beae09d8.png","assets/mp/8ddb5da9.png","assets/mp/993e1a2b.png","assets/mp/1046d8d2.png","assets/mp/512fddfd.jpg","assets/mp/17e657e2.png","assets/mp/184c87ea.png","assets/mp/03292458.png","assets/mp/97e8d9dd.png","assets/mp/e2613cd9.png","assets/mp/5005b4e2.png"],
+  "s1":["assets/mp/04933a73.png","assets/mp/3036b04d.png","assets/mp/a27c5c2d.png","assets/mp/512fddfd.jpg","assets/mp/17e657e2.png"],
+  "s3":["assets/mp/e2e58664.png","assets/mp/5571ebc1.png","assets/mp/89e6cf1e.png","assets/mp/c5cc460f.png","assets/mp/95d80421.png","assets/mp/64309503.png","assets/mp/b52216e8.png","assets/mp/e9dfed5c.png"],
+  "scb":["assets/mp/e2e58664.png","assets/mp/5571ebc1.png","assets/mp/2e4405c0.png","assets/mp/cc68aa1d.png","assets/mp/61a53135.png","assets/mp/4d6924c2.png"],
+  "sed":["assets/mp/1195d2f2.png","assets/mp/8efc9237.png","assets/mp/e5101715.png","assets/mp/2f06c545.png"],
+  "s4":["assets/mp/13cc6279.png","assets/mp/eeaa3182.png","assets/mp/6184a5c1.png","assets/mp/b5c08180.png"],
+  "sst":["assets/mp/a8ae1cd3.png","assets/mp/5141c4f8.jpg","assets/mp/4bb8bd30.png"],
+  "sctc":["assets/mp/53bf9978.png","assets/mp/3ff192a6.png","assets/mp/e3545271.png","assets/mp/ab38d415.png"],
+  "s5":["assets/mp/76c71daf.png","assets/mp/f49b238a.png","assets/mp/8655f926.png","assets/mp/a451b878.png","assets/mp/9abc79ee.png","assets/mp/97321805.png","assets/mp/a183f2d6.png","assets/mp/42febbcf.png","assets/mp/8d82f438.png","assets/mp/363ad7f0.png","assets/mp/02473aaa.png","assets/mp/ce17f4b6.png"],
+  "sprint":["assets/mp/1a122567.png","assets/mp/7796e995.png","assets/mp/15ceaef2.png","assets/mp/1457a050.png"],
+  "sapt":["assets/mp/d1ea83ec.png","assets/mp/7796e995.png","assets/mp/aa77ed3f.png","assets/mp/977e33f0.png"],
+  "slog":["assets/mp/7796e995.png","assets/mp/15ceaef2.png","assets/mp/746fd1fd.png"],
+  "svas":["assets/mp/80e138ff.png","assets/mp/d43889d1.png","assets/mp/16c37905.png","assets/mp/5c878d8a.png","assets/mp/d903be07.png","assets/mp/82feac80.png","assets/mp/b068ac83.png","assets/mp/d953f304.png"],
+  "s6":["assets/mp/daa32f3c.png","assets/mp/63ce8ac7.png","assets/mp/0cad6f9b.png"],
+  "smo":["assets/mp/3b33ee77.png","assets/mp/e2cc69df.png","assets/mp/1f702f63.png","assets/mp/fa45c913.png","assets/mp/84714420.png","assets/mp/b9b04330.png"],
+  "s7":["assets/mp/6f60a414.png","assets/mp/883b6361.png","assets/mp/0d07a4e2.png","assets/mp/ca5658e8.png","assets/mp/23cf3739.png"],
+  "srt":["assets/mp/3d413bed.png","assets/mp/95fc290c.png","assets/mp/5b7a78a8.png","assets/mp/88ae9c06.png","assets/mp/be10cb7a.png","assets/mp/b2a2ff4b.png","assets/mp/6dd346f1.png","assets/mp/c59b0d10.png","assets/mp/8ded56ff.png","assets/mp/50ef34db.png"]
 };
 
 /* ================= 渲染 ================= */
@@ -467,6 +589,13 @@ function stepHTML(m,s,i,tab){
     <div class="step-h"><span class="step-n">步骤 ${i+1}</span><h4 class="step-t">${esc(s.t)}</h4>${chip}</div>
     <div class="step-d">${desc}</div>${qr}${lnks}${rels}${stepImgs(m,s)}</div>`;
 }
+function modTable(m){
+  if(!m.table) return '';
+  const cls=v=>/✅/.test(v)?'yes':(/❌/.test(v)?'no':'');
+  const thead=`<thead><tr>${m.table.head.map(h=>`<th>${esc(h)}</th>`).join('')}</tr></thead>`;
+  const tbody=`<tbody>${m.table.rows.map(r=>`<tr>${r.map(c=>`<td class="${cls(c)}">${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody>`;
+  return `<div class="mod-table"><table>${thead}${tbody}</table></div>`;
+}
 function moduleHTML(m,tab){
   const note=m.note?`<div class="tip${m.noteWarn?' warn':''}"><span class="e">${m.noteWarn?'⚠️':'💡'}</span><div>${esc(m.note)}</div></div>`:'';
   const note2=m.note2?`<div class="tip"><span class="e">🔁</span><div>${esc(m.note2)}</div></div>`:'';
@@ -480,6 +609,7 @@ function moduleHTML(m,tab){
     ${note}
     ${note2}
     ${m.steps.map((s,i)=>stepHTML(m,s,i,tab)).join('')}
+    ${modTable(m)}
   </section>`;
 }
 function stagebarHTML(){
