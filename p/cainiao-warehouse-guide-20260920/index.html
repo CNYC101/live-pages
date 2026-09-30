@@ -89,6 +89,15 @@
   .step-d li{margin:3px 0}
   .step-flow .ln{position:relative;padding-left:16px;margin:5px 0;font-size:13.5px;line-height:1.6;color:var(--ink-2)}
   .step-flow .ln::before{content:'';position:absolute;left:2px;top:9px;width:5px;height:5px;border-radius:50%;background:var(--brand)}
+  .qa-item{padding:11px 0;border-top:1px dashed var(--line)}
+  .qa-item:first-child{border-top:0;padding-top:2px}
+  .qa-q{font-weight:700;color:var(--ink);font-size:14px;line-height:1.5}
+  .qa-q::before{content:'Q';display:inline-block;font-size:11px;font-weight:800;color:#fff;background:var(--brand);border-radius:5px;padding:1px 6px;margin-right:8px;vertical-align:1px}
+  .qa-a{margin-top:5px;color:var(--ink-2);font-size:13.5px;line-height:1.65}
+  .qa-a-tag{color:var(--brand);font-weight:800;margin-right:2px}
+  .qa-item .step-imgs{margin-top:8px}
+  @keyframes stepflash{0%{background:#fff6d6}100%{background:transparent}}
+  .step.flash{animation:stepflash 1.3s ease-out}
 
   .chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;border-radius:20px;padding:4px 11px;margin-left:auto;white-space:nowrap}
   .chip-pc{color:#fff;background:var(--warn);cursor:pointer}
@@ -155,6 +164,14 @@
   .faq-a{display:none;padding:0 18px 16px;color:var(--ink-2);font-size:14px}
   .faq-item.open .faq-a{display:block}
   .faq-item.open .faq-q .arw{transform:rotate(180deg);color:var(--brand)}
+  .faq-cat{margin:22px 0 6px}
+  .faq-cat-h{font-size:15px;font-weight:800;color:var(--ink);display:flex;align-items:center;gap:8px;margin:0 0 4px;padding-top:6px}
+  .faq-cat-h .bar{width:4px;height:16px;background:var(--brand);border-radius:2px}
+  .faq-cat-n{font-size:12px;font-weight:600;color:var(--brand);background:#eef4ff;border-radius:10px;padding:1px 9px}
+  .faq-search{display:flex;align-items:center;gap:12px;margin:14px 0 4px;flex-wrap:wrap}
+  .faq-search input{flex:1;min-width:240px;font-size:14px;padding:11px 15px;border:1px solid var(--line);border-radius:11px;background:#fff;color:var(--ink);outline:none}
+  .faq-search input:focus{border-color:var(--brand)}
+  .faq-search-cnt{font-size:13px;color:var(--ink-3);white-space:nowrap}
 
   /* lightbox */
   .lb{position:fixed;inset:0;background:rgba(10,20,40,.82);display:none;place-items:center;z-index:100;padding:24px}
@@ -226,8 +243,15 @@ function stagesFor(tab){return tab==='mp'?MP_STAGES:STAGES;}
 /* step: t 标题 | d 说明(数组/字符串) | img 该步截图在源文档中的图序号 | pc+pcTarget 需转PC | rel 互链[{to,label,tab?}] | todo 正文待补 */
 /* ================= 拼多多 · 管易云对接（PC / 小程序 共用同一套步骤与截图） ================= */
 const PDD_LINKS=[
-  {u:'https://alidocs.dingtalk.com/i/nodes/Obva6QBXJwxNZoMOCM7vbXL48n4qY5Pr',t:'管易云对接常见 QA'},
-  {u:'assets/pdd_template.xlsx',t:'管易云商品及规格导入模板 (.xlsx)',dl:1},
+ {
+  "jumpQa": true,
+  "t": "管易云对接常见 QA"
+ },
+ {
+  "u": "assets/pdd_template.xlsx",
+  "t": "管易云商品及规格导入模板 (.xlsx)",
+  "dl": 1
+ }
 ];
 const PDD_STEPS=[
  {
@@ -526,25 +550,126 @@ const PDD_STEPS=[
  },
  {
   "t": "常见问题 QA",
-  "d": [
-   "关联商品：确认平台商品已正确关联货品；",
-   [
-    50
-   ],
-   "点了没反应：多为浏览器拦截 / 登录态失效，重登或换浏览器再试；",
-   [
-    51
-   ],
-   "拆单、合单后部分退货等特殊场景按 QA 图示处理。",
-   [
-    52
-   ],
-   [
-    53
-   ],
-   [
-    54
-   ]
+  "qa": [
+   {
+    "q": "可以同时把店铺授权到菜鸟和管易云吗？",
+    "a": [
+     "不可以。菜鸟目前已不支持授权拼多多店铺；如果历史上授权过拼多多店铺，需确保已过期，未过期的请手动停用。"
+    ]
+   },
+   {
+    "q": "登录显示密码错误",
+    "a": [
+     "① 有「重置密码」入口时，点击重置密码；② 没有重置密码入口，检查登录手机号是否为当初提交的手机号；③ 以上都不行，联系你的对接小二协助处理。"
+    ]
+   },
+   {
+    "q": "菜鸟系统里店铺显示「未授权」？（常见于新客）",
+    "a": [
+     "正常现象，只要在管易云里已完成授权即可。"
+    ],
+    "img": [
+     55
+    ]
+   },
+   {
+    "q": "订单没有绑定商品 / 绑定的不是正确商品",
+    "a": [
+     "只要商品资料有更新（新增、修改、删除、停用等）都需要重做这一步，更新到最新信息，否则订单无法对应到最新资料。",
+     "操作：平台铺货界面完成铺货后，在「订单管理」界面 → 修改商品下拉 → 关联商品 → 自动关联。"
+    ],
+    "img": [
+     56
+    ]
+   },
+   {
+    "q": "操作后还没反应？",
+    "a": [
+     "做平台铺货前下载的订单，需要把「待审核商品为空」的订单删除后重新手动下载即可。注意：平台状态不能是「已发货」。"
+    ],
+    "img": [
+     57,
+     58
+    ]
+   },
+   {
+    "q": "分仓怎么操作？",
+    "a": [
+     "把分仓信息同步给你的对接小二；创建商品时只选择一个仓库即可，系统会自动进行分配。"
+    ]
+   },
+   {
+    "q": "外仓订单转入失败",
+    "a": [
+     "个别订单转入失败，先检查是否已无库存；如果是批量转入失败，联系你的对接小二。"
+    ],
+    "img": [
+     59
+    ]
+   },
+   {
+    "q": "需要合单",
+    "a": [
+     "合单默认不开启，需要的话联系你的对接小二，开启后会自动合单。"
+    ]
+   },
+   {
+    "q": "需要拆单",
+    "a": [
+     "勾选订单 → 右键点击 → 选择「手动拆单」。"
+    ],
+    "img": [
+     60
+    ]
+   },
+   {
+    "q": "订单已发货，怎么修改订单内容？",
+    "a": [
+     "管易云「已发货」状态下不能再做任何操作；如需修改订单内容（如商品等），需在 CNBP 进行「拦截并复制」，随后在 CNBP 修改。"
+    ]
+   },
+   {
+    "q": "合单的订单如果部分发起退货，其余的会被取消吗？",
+    "a": [
+     "合单订单只会取消被退货的内容，没有被退货的仍会继续下发（下图即为仍需发货的商品）。"
+    ],
+    "img": [
+     61
+    ]
+   },
+   {
+    "q": "推单到 CNBP 后订单信息乱码？",
+    "a": [
+     "因拼多多的权限策略，密文属于正常情况，无需处理。"
+    ],
+    "img": [
+     62
+    ]
+   },
+   {
+    "q": "订单管理界面没有订单 / 部分订单没拉取到管易云？",
+    "a": [
+     "优先排查店铺是否已授权：未授权先去授权；已授权的话，授权之前的订单需要手动下载，位置：订单管理 - 新增 - 手动下载。手动下载仍拉不到的，联系你的对接小二。"
+    ],
+    "img": [
+     63
+    ]
+   },
+   {
+    "q": "如何重推订单？",
+    "a": [
+     "对订单反审核后重新审核即可。（注意：尽量手动勾选需要重推的订单，避免出现重复发货。）"
+    ],
+    "img": [
+     64
+    ]
+   },
+   {
+    "q": "订单没自动回传（已发货但 CNBP 显示回传失败）",
+    "a": [
+     "检查条码是否已维护，并联系管易云确认商品绑定是否正确。"
+    ]
+   }
   ]
  }
 ];
@@ -2424,47 +2549,406 @@ const GUIDE = {
 };
 
 const FAQ = [
-  {q:'什么是菜鸟云仓？',a:'菜鸟云仓 = 专业的大仓库 + 帮你管理库存、拣货打包、发货的专业团队。把你的货提前放进大仓库，你只管卖货，来单后仓库自动打包好、贴好快递单、发走。'},
-  {q:'云仓发货是怎么收费的？',a:'一单通常包含：① 订单处理费（人工费，含入库卸货清点上架、保管、打单分拣复核打包称重出库等）；② 配送费（快递费，按快递类型 / 发货量 / 包裹重量 / 距离确定）；③ 包材费（纸箱、气泡袋等耗材，自采则不收）；④ 仓储费（正常周转不收：≤30 天 0 元、31–45 天 1.2、46–60 天 1.5、61–90 天 2、>90 天 3 元 / 立方 / 天）；⑤ 增值服务（按需主动下发，如质检、贴标、换包装、组套、退货处理）。'},
-  {q:'我的货能不能入仓？需要满足哪些条件？',a:'非易燃易爆、违禁品、活体等快递明文禁收物品，及非医药、非冷冻冷藏生鲜，均可入仓；部分类目满足条件才可收货。更多禁收 / 限收见"品类收寄标准名录"。'},
-  {q:'我单量少能不能入仓？',a:'可以，每天只发一单也能入仓。'},
-  {q:'货物应该怎么送到仓？',a:'支持快递、物流、货拉拉等多种形式送仓，最好送货上门。快递到仓需提前和快递公司沟通，不支持寄到驿站；包裹送仓后把快递单号在钉钉服务群告知仓库，以免影响上架，同时需满足备货要求。'},
-  {q:'对接云仓需要自己购买 ERP 吗？',a:'不用，菜鸟提供免费 ERP，支持订单自动发货、异常自动预警、一键催发催派、在线拦截等，目前在 PC 端使用。若已有 ERP，可联系实施同学做系统对接，再推单到菜鸟仓。'},
-  {q:'仓库最晚发货到什么时候？',a:'一般截单时间为 18:00，18:00 前推单至菜鸟仓的订单当天都能发出；个别仓库会延迟到 20:00。'},
-  {q:'仓库的作业流程是什么样的？',a:'货送仓后做标准化库位管理 → 消费者下单后 WMS 生成拣货任务（标注位置 / 数量 / 优先级）→ 拣货员按路径快速拣选 → 扫码复核后打包，避免错发漏发 → 滚动发车出库，快递门口接货直送分拨 → 专业团队处理拦截、改地址、催派等异常，全流程服务。'},
-  {q:'账单和开票问题怎么咨询？',a:'在商家工作台点击"服务"-"金掌柜"，登录后在右上角找到人工客服咨询；咨询时间为工作日 9:30–18:30。'},
-  {q:'小程序能做的和 PC 能做的有什么区别？',a:'登录 / 建品 / 绑定 / 入库 / 审单 / 查账单等日常操作可在小程序完成；打印条码、批量上传、完整账单与开票等仍需在 PC 端处理。'},
+  {cat:'入门 · 收费 · 入仓', items:[
+    {q:'什么是菜鸟云仓？',a:'菜鸟云仓 = 专业的大仓库 + 帮你管理库存、拣货打包、发货的专业团队。把你的货提前放进大仓库，你只管卖货，来单后仓库自动打包好、贴好快递单、发走。'},
+    {q:'云仓发货是怎么收费的？',a:'一单通常包含：① 订单处理费（人工费，含入库卸货清点上架、保管、打单分拣复核打包称重出库等）；② 配送费（快递费，按快递类型 / 发货量 / 包裹重量 / 距离确定）；③ 包材费（纸箱、气泡袋等耗材，自采则不收）；④ 仓储费（正常周转不收：≤30 天 0 元、31–45 天 1.2、46–60 天 1.5、61–90 天 2、>90 天 3 元 / 立方 / 天）；⑤ 增值服务（按需主动下发，如质检、贴标、换包装、组套、退货处理）。'},
+    {q:'我的货能不能入仓？需要满足哪些条件？',a:'非易燃易爆、违禁品、活体等快递明文禁收物品，及非医药、非冷冻冷藏生鲜，均可入仓；部分类目满足条件才可收货。更多禁收 / 限收见"品类收寄标准名录"。'},
+    {q:'我单量少能不能入仓？',a:'可以，每天只发一单也能入仓。'},
+    {q:'货物应该怎么送到仓？',a:'支持快递、物流、货拉拉等多种形式送仓，最好送货上门。快递到仓需提前和快递公司沟通，不支持寄到驿站；包裹送仓后把快递单号在钉钉服务群告知仓库，以免影响上架，同时需满足备货要求。'},
+    {q:'对接云仓需要自己购买 ERP 吗？',a:'不用，菜鸟提供免费 ERP，支持订单自动发货、异常自动预警、一键催发催派、在线拦截等，目前在 PC 端使用。若已有 ERP，可联系实施同学做系统对接，再推单到菜鸟仓。'},
+    {q:'仓库最晚发货到什么时候？',a:'一般截单时间为 18:00，18:00 前推单至菜鸟仓的订单当天都能发出；个别仓库会延迟到 20:00。'},
+    {q:'仓库的作业流程是什么样的？',a:'货送仓后做标准化库位管理 → 消费者下单后 WMS 生成拣货任务（标注位置 / 数量 / 优先级）→ 拣货员按路径快速拣选 → 扫码复核后打包，避免错发漏发 → 滚动发车出库，快递门口接货直送分拨 → 专业团队处理拦截、改地址、催派等异常，全流程服务。'},
+    {q:'账单和开票问题怎么咨询？',a:'在商家工作台点击"服务"-"金掌柜"，登录后在右上角找到人工客服咨询；咨询时间为工作日 9:30–18:30。'},
+    {q:'小程序能做的和 PC 能做的有什么区别？',a:'登录 / 建品 / 绑定 / 入库 / 审单 / 查账单等日常操作可在小程序完成；打印条码、批量上传、完整账单与开票等仍需在 PC 端处理。'}
+  ]},
+  {cat:'售前 · 系统与账号', items:[
+    {q:'ASCP 后台新增子店铺提示"请先发送验证码，验证码 15 分钟有效"怎么办？',a:'一般是填写的手机号与该店铺主旺旺绑定的手机号不一致导致，改成正确的手机号重试即可。此校验仅针对淘系平台，非淘系平台不做校验。'},
+    {q:'推送入库单报错"缺少包装方案配置"（INBOUND_ORDER_CHECK_SKU_PACKAGING_PLAN_FAILED）怎么办？',a:'说明该货品需要使用菜鸟统一包材，但还没在系统里维护包装方案。把报错货品的包装方案维护好再重新推送即可。维护路径：ASCP 后台—货品模块—包材管理—包材服务管理；或 CNBP 工作台—商货品—货品包装方案。'},
+    {q:'打印箱唛时报错"is not a valid input"怎么办？',a:'一般是货品条码里带了中文或特殊字符导致，把中文 / 特殊字符去掉，之后重新推单操作即可。'}
+  ]},
+  {cat:'售后 · 服务工单', items:[
+    {q:'工单发起后如何查看进度？',a:'两种途径：① 在专属服务群通过机器人发起工单时，点击机器人回复中的工单号即可查询；② 在 CNBP 工作台—服务—服务单列表（新），设置筛选条件进行查询。'},
+    {q:'需要改地址、拦截订单怎么处理、联系谁？',a:'在专属服务群发起工单处理即可。需要注意：已到达配送节点的订单无法再发起改地址、拦截；且发起后并非百分百成功，请留意工单状态。'},
+    {q:'我发起的拦截、拒收订单在哪里查看？',a:'在 CNBP 工作台—订单管理界面，通过筛选订单状态来查看（注意设置筛选时间）。'},
+    {q:'退回件怎么处理？',a:'消费者未签收、退回菜鸟仓的件，先确认是否拦截成功；若拦截失败，还需联系消费者拒收。'}
+  ]},
+  {cat:'发货 · 审单与推单报错', items:[
+    {q:'中环 CNBP 审核订单提示"快递未匹配 / 仓库未匹配""操作不支持"怎么办？',a:'先检查快递策略是否已配置，未配置先配置；已配置则：勾选订单 → 点击"改仓改配" → 点击"修改快递" → 选择"菜鸟优配"后确认，再提交审核。'},
+    {q:'审核订单提示"商品未关联"怎么办？',a:'先检查商货品绑定是否已配置，未配置先配置；已配置则：勾选订单 → 点击"更多操作" → 点击"处理未关联订单"，再审核。注意：在平台后台改动商品平台编码后，关联关系会失效，需要重新操作关联。'},
+    {q:'推单报错"未找到匹配的店铺，请先维护店铺信息"怎么办？',a:'说明子店铺没维护好，请到菜鸟系统和 ERP 系统把店铺信息维护一致后重新推单。CNBP 路径：工作台—基础—基础信息—店铺管理。'},
+    {q:'审核提示"发货联系人为空"怎么办？',a:'在【基础】—【线上店铺管理】页面维护好发件人信息后，再提交审核。'},
+    {q:'审单报错"仓库货主编码为空"怎么办？',a:'在【订单管理】勾选该订单 → 点击【改仓改配】，选择对应的发货仓库后再提交审核。'},
+    {q:'审单报错"货品预占缺货"怎么办？',a:'① 在【库存】—【品库存查询】看对应仓库货品是否充足，不足则补货后推单；② 检查【物流信息】里推送的仓库是否选错，选错就【改仓改配】改成正确仓库后重新审核。'},
+    {q:'菜鸟平台已发货，但平台未发货、发货状态没回传怎么办？',a:'在 CNBP—订单—发货物流回传里找到此单，查看具体报错，修改后再重试。'},
+    {q:'发货时显示 HOLD 单怎么处理？',a:'点击 HOLD 单标识查看原因。① 若为征信原因：绑定的代扣支付宝余额不足导致欠费，请及时充值，扣款需要一定时间，可在金掌柜首页点"加速划扣"提升扣款速度，不欠费后复制 HOLD 单重新审核；② 若为到达原因：系统解析收货地址后发现该区域快递无法覆盖，导致无法正常发货，可取消订单自己发，或下退供单待仓库备好货后叫快递上门取件。注：HOLD 单需商家在推单后主动关注、及时处理，避免订单超时带来损失。'},
+    {q:'商家平台订单为什么没有同步到 CNBP？',a:'依次排查：① 在【基础—线上店铺管理】检查授权是否到期，到期则重新授权后重试；② 检查商品是否已同步 CNBP，未同步则到【商货品—商品管理—平台商品】拉取后重试；③ 检查订单是否已落到商家仓发，可在【订单—商家仓订单】按单号搜索；④ 手动拉单：【订单—2C 订单—订单管理—更多操作—同步平台订单】，按店铺 / 单号 / 时间等条件拉取。'},
+    {q:'入库之后需要关联商品吗？',a:'需要。在菜鸟仓发货的货品必须进行商货品绑定（关联商品），否则可能导致仓库发错货。操作路径：CNBP 工作台—商货品—商品管理—平台商品，通过关联或修改按钮把店铺链接的 SKU 与对应货品编码绑定。'},
+    {q:'"同步平台商品"是指什么？',a:'指把淘宝、抖音等销售平台上的商品信息拉取到菜鸟云仓系统（CNBP），以便在系统内进行货品关联和管理。操作路径：CNBP 工作台—商货品—商品管理—平台商品—同步平台商品，需先在店铺管理开启"自动下载店铺商品"，之后可一键同步。同步后可通过自动或手工方式把平台商品与系统货品绑定，确保库存和订单数据一致。'},
+    {q:'同一货品只能选择一种包装方案吗？',a:'是的。系统要求每个货品必须有唯一包装方案，以保证出库标准化操作，避免多方案导致发货混乱。'},
+    {q:'锁定订单是不是就是不推单？',a:'锁定是暂时停止该订单的后续处理，等同于暂时阻止推单——处于锁定状态的订单在批量审核时会被系统自动跳过。若需恢复推单，先解除锁定并完成审核操作。'},
+    {q:'商家 ERP 系统和 CNBP 系统库存有差异，怎么查看、以哪个为准？',a:'建议通过进销存流水账核对。产生差异的常见原因是 ERP 未开启库存盘点单接口，导致盘点结果无法回传给 ERP；最终计费以菜鸟系统库存为准。'},
+    {q:'推单报错"处理地址清洗结果异常"怎么办？',a:'多为 ERP 推单时未传发件人地址信息导致推单失败，在 ERP 上把这部分信息补全后重推即可。'},
+    {q:'推单报错"占用库存异常 / 统一流控错误码 S_LIMIT"怎么办？',a:'一般是系统短时间内推送单据过多触发限流，建议分批推单、重试推送即可。'},
+    {q:'报错"仓库均库存不足（wrs 仓路由失败）"怎么办？',a:'说明报错货品可用库存不足，需补货后再重新推单。'},
+    {q:'报错"物流协同下发 LBX 失败、返回结果为空"怎么办？',a:'检查收件人必填信息（收件人名称、邮编、手机号）是否为空；若信息完整仍失败，可能是接口限流，取消单据、重建后重新推单即可。'},
+    {q:'报错"指定的配送服务不可用（如 26-预约配送服务）"怎么办？',a:'一般是消费者下单时选择了预约配送，而快递暂不支持该服务，需联系你的 ERP 技术人员去掉推送报文里的 <scheduleDay> 字段后重新推送。'},
+    {q:'报错"指定的配送品牌不可用（specified_brand_not_usable）"怎么办？',a:'系统不支持指定配送品牌，推单时快递公司请用 OTHER 进行推送。'},
+    {q:'推单货品报错"scItemIds 参数无效（parameters invalid）"怎么办？',a:'一般是推送的货品 ID 为空或格式错误，菜鸟货品 ID 是自动生成的纯数字（字段 itemid），维护好货品后重新推单即可。'},
+    {q:'推送入库单报错"item must not be combItem（组合货品）"怎么办？',a:'先核查推送的是否为组合货品；若没有，检查是否有新品编码与组合货品编码相同导致校验报错；修改后取消、新建重推即可。'},
+    {q:'报错"取消仓储单失败 / 取消出库单异常"怎么办？',a:'可能仓库正在进行出库、或已实际发出，需要与仓库确认该包裹的实际状态是否已出库。'},
+    {q:'报错"查询不到应用授权信息"怎么办？',a:'一般是货主还没有完成系统入驻，请联系你的对接客户经理确认入驻情况。'}
+  ]},
+  {cat:'逆向 · 退货与退仓', items:[
+    {q:'快件退回了但仓库怎么不入库？',a:'拦截退回或拒收退回的件，商家需要建立销退单推送云仓，云仓收到货物后用销退单进行销退上架。若仓库未及时上架，可在超过仓配全链路逆向时效（预计送达时间 + 正向 24 / 48 / 96H + 2 天）后，发起"逆向丢失"投诉工单。'},
+    {q:'客户签收后又退货（客退件）怎么处理？',a:'仓库只接收拦截件、拒收件，不接收客户签收后退回的客退件；客退件无法退回仓库重新上架，需你向消费者提供自己的收货信息，把货物退回到你处。'},
+    {q:'货物退仓出现数量差异怎么处理？',a:'① 若退仓前已安排盘点、且仓库已对差异做盘盈亏处理，则按季度库存差异工单规则处理（商家自然季度库存差异率超过万分之五可发起，未超属仓库正常消耗）；② 若未盘点，需与仓库现场确认差异：仓库按应退数量出库，并在出库单上标注退供单号、应退数量、实退数量，双方签字后凭此出库单发起退供差异工单处理。'},
+    {q:'推送销退单失败（提示运单号必填 / 缺原发货单号）怎么办？',a:'菜鸟仓逆向入库单要求退回运单号必填。请补齐退回运单号、原交易出库单的业务单号，以及菜鸟返回的 LBX03 仓储单号等信息后重新推送。'},
+    {q:'推送销退单报错"存在重复明细"怎么办？',a:'一般是同一货品被分成两部分推送（如正向 13 件、逆向拆成 8+5）。请与你的 ERP 核对，让逆向销退单的货品数量与正向销售订单保持一致后再推单。'},
+    {q:'拦截、拒收的件，系统都会自动创建销退单吗？',a:'不能保证百分百自动创建。请主动关注拦截、拒收的订单是否已生成销退单，没有生成的需要商家主动创建，避免因无销退单导致无法上架。'},
+    {q:'未出库拦截、出库后拦截，库存会有什么变化？',a:'仓库接单状态下拦截取消的订单会占用库存，需商家释放库存后流转到良品库存；出库后拦截的订单会扣减库存，需创建销退单重新入库。释放库存路径：CNBP 工作台—订单管理—更多操作—释放库存。'},
+    {q:'创建销退单报错"销退货品数量不能大于原订单发货数量"怎么办？',a:'使用外部 ERP 的商家，请核对销退单里包含的货品明细和数量是否与原单完全一致，不一致请在 ERP 侧修改好后再推送。'},
+    {q:'如何设置自动拦截？',a:'操作路径：CNBP 工作台—订单—快递策略—店铺逆向规则。在此页面点"新建"、选择对应店铺：仓拦截默认打开（生效于包裹未出库前的客户退款），配拦截默认关闭（生效于出库后的客户退款），可按需自主选择开启。'},
+    {q:'退供的时候可以选残品吗？',a:'可以，前提是该退供货品需要有残品库存才能选择。'},
+    {q:'下了退供单叫快递取件，取件地址在哪里看？',a:'专属服务群公告中的仓库地址即为取件地址。'},
+    {q:'什么是"逆向异常返仓"？',a:'逆向异常返仓（系统中称"运配异常"）指退货运单号等于发货运单号、且该包裹没有拦截或拒签记录，但菜鸟仓逆向收货模块有过与快递的交接记录，即包裹无原因到仓。此类场景创建的销退入库任务属于原包退货。'}
+  ]},
+  {cat:'库存管理', items:[
+    {q:'库存盘点结果（库存调整单、盘亏单、盘盈单）会回传给 ERP 吗？',a:'菜鸟的系统单据都会回传给 ERP，但需要检测 ERP 侧能否接收；如果 ERP 无法接收，需联系你的 ERP 技术人员解决。'},
+    {q:'仓库里的残品怎么才能发出？',a:'残品无法通过正向出库形式发出，可通过下"残品退供"，待仓库备好货后叫快递 / 物流上门取件，或自行到仓提货。'},
+    {q:'商家日常需要盘点库存怎么操作？',a:'先与仓库确认盘点事宜，确定盘点的品及数量，后续盘点费用通过下发其他增值服务抵扣；若出现库存差异，需等季度库存盘点后处理。'},
+    {q:'日销、月销在哪里查看？',a:'通过设置筛选时间等条件拉取库存流水明细来反映销量（查看某个单品的销量同理）。操作路径：CNBP 工作台—库存—库存加减—库存流水查询（新）。'},
+    {q:'菜鸟系统显示有库存、ERP 系统没有库存，怎么处理？',a:'库存以菜鸟系统为准，商家可在 ERP 上调整库存保持一致。'},
+    {q:'商品库存能同步到平台吗？',a:'商品库存无法自动同步到平台，商家平台库存需手动更改保持一致。'},
+    {q:'商家包材怎么查询库存？',a:'未作入库管理的商家包材无法查询库存数据，可询问仓库剩余数量来补充库存。'},
+    {q:'CNBP 上查询到的初期库存准确吗？',a:'是准确的。如出现库存对不上的情况，需联系在线客服核实。'},
+    {q:'仓库可以修改商家入库后系统显示的库存数量吗？',a:'不可以。'},
+    {q:'查询库存时显示"被占用"是什么、怎么解决？',a:'点击被占用品的数量可跳转查询占用原因。若为交易单占用，说明有正常单据占用了该品库存；若为换货单占用且已完成，需联系运营协助释放；若为仓库调整占用，则需要仓库释放。'},
+    {q:'云仓有库存预警功能吗？',a:'云仓暂不具备库存预警功能，需商家主动关注库存情况、及时补货。'}
+  ]},
+  {cat:'财务结算 · 账单', items:[
+    {q:'费用合同报价在哪里可以查询？',a:'可在【CNBP—右上角头像—我的订购】中查看费用合同报价。'},
+    {q:'对账单有异议，怎么处理？',a:'收到账单后对存在异议的费用可先咨询金掌柜在线客服；如沟通后仍有疑问，可联系你的客户经理、服务小二协助处理。'},
+    {q:'账号欠费被熔断了，怎么处理？',a:'使用商家绑定的代扣支付宝账户充值，日常确保余额充足，减少熔断风险、避免影响推单；如果已经熔断，充值完成后可联系服务小二加急划扣处理。（88 小仓商家可在 88 小仓工作台点击还款）'},
+    {q:'欠费后重新充值，推单仍有失败异常，怎么处理？',a:'充值后扣款会有约 15 分钟延迟，可联系服务小二确认支付宝账户是否划扣成功，待确认不欠费后，重新拦截、复制订单再审核即可。'},
+    {q:'如何查询赔付的账单（包括工单赔付等）？',a:'可登录金掌柜—账单管理—费用账单，选择对应的账单类型与费用项进行核实查看。'}
+  ]},
 ];
-
 /* ================= 截图资源（模块 id -> 图片路径，按源文档图序号排列） ================= */
 const IMAGES={
-  "m1":["assets/m1_1.jpg","assets/m1_2.jpg","assets/m1_3.jpg","assets/m1_4.jpg","assets/m1_5.jpg","assets/m1_6.jpg"],
-  "m2":["assets/m2_1.jpg","assets/m2_2.jpg","assets/m2_3.jpg","assets/m2_4.jpg","assets/m2_5.jpg","assets/m2_6.jpg","assets/m2_7.jpg"],
-  "m3":["assets/m3_1.jpg","assets/m3_2.jpg","assets/m3_3.jpg","assets/m3_4.jpg","assets/m3_5.jpg","assets/m3_6.jpg","assets/m3_7.jpg","assets/m3_8.jpg","assets/m3_9.jpg","assets/m3_10.jpg","assets/m3_11.jpg","assets/m3_12.jpg","assets/m3_13.jpg","assets/m3_14.jpg","assets/m3_15.jpg","assets/m3_16.jpg","assets/m3_17.jpg"],
-  "m4":["assets/m4_1.jpg","assets/m4_2.jpg","assets/m4_3.jpg","assets/m4_4.jpg","assets/m4_5.jpg","assets/m4_6.jpg","assets/m4_8.jpg","assets/m4_9.jpg","assets/m4_10.jpg","assets/m4_11.jpg","assets/m4_12.jpg","assets/m4_13.jpg","assets/m4_14.jpg","assets/m4_15.jpg","assets/m4_16.jpg","assets/m4_17.jpg","assets/m4_18.jpg","assets/m4_19.jpg","assets/m4_20.jpg","assets/m4_21.jpg","assets/m4_22.jpg","assets/m4_23.jpg"],
-  "m5":["assets/m5_1.jpg","assets/m5_2.jpg","assets/m5_3.jpg","assets/m5_4.jpg","assets/m5_5.jpg","assets/m5_6.jpg","assets/m5_7.jpg","assets/m5_8.jpg","assets/m5_9.jpg","assets/m5_10.jpg","assets/m5_11.jpg","assets/m5_12.jpg","assets/m5_13.jpg","assets/m5_14.jpg","assets/m5_15.jpg"],
-  "m7":["assets/m7_1.jpg","assets/m7_2.jpg","assets/m7_3.jpg","assets/m7_4.jpg","assets/m7_5.jpg","assets/m7_6.jpg","assets/m7_7.jpg","assets/m7_8.jpg"],
-  "m8":["assets/m8_1.jpg","assets/m8_2.jpg","assets/m8_3.jpg","assets/m8_4.jpg","assets/m8_5.jpg","assets/m8_6.jpg","assets/m8_7.jpg"],
-  "m9":["assets/m9_1.jpg","assets/m9_2.jpg","assets/m9_3.jpg","assets/m9_4.jpg","assets/m9_5.jpg"],
-  "m10":["assets/m10_1.jpg","assets/m10_2.jpg","assets/m10_3.jpg","assets/m10_4.jpg","assets/m10_5.jpg","assets/m10_6.jpg","assets/m10_7.jpg","assets/m10_8.jpg"],
-  "pdd":["assets/pdd_1.jpg","assets/pdd_2.jpg","assets/pdd_3.jpg","assets/pdd_4.jpg","assets/pdd_5.jpg","assets/pdd_6.jpg","assets/pdd_7.jpg","assets/pdd_8.jpg","assets/pdd_9.jpg","assets/pdd_10.jpg","assets/pdd_11.jpg","assets/pdd_12.jpg","assets/pdd_13.jpg","assets/pdd_14.jpg","assets/pdd_15.jpg","assets/pdd_16.jpg","assets/pdd_17.jpg","assets/pdd_18.jpg","assets/pdd_19.jpg","assets/pdd_20.jpg","assets/pdd_21.jpg","assets/pdd_22.jpg","assets/pdd_23.jpg","assets/pdd_24.jpg","assets/pdd_25.jpg","assets/pdd_26.jpg","assets/pdd_27.jpg","assets/pdd_28.jpg","assets/pdd_29.jpg","assets/pdd_30.jpg","assets/pdd_31.jpg","assets/pdd_32.jpg","assets/pdd_33.jpg","assets/pdd_34.jpg","assets/pdd_35.jpg","assets/pdd_36.jpg","assets/pdd_37.jpg","assets/pdd_38.jpg","assets/pdd_39.jpg","assets/pdd_40.jpg","assets/pdd_41.jpg","assets/pdd_42.jpg","assets/pdd_43.jpg","assets/pdd_44.jpg","assets/pdd_45.jpg","assets/pdd_46.jpg","assets/pdd_47.jpg","assets/pdd_48.jpg","assets/pdd_49.jpg","assets/pdd_50.jpg","assets/pdd_51.jpg","assets/pdd_52.jpg","assets/pdd_53.jpg","assets/pdd_54.jpg"],
-  "s0":["assets/mp/410de0e8.png","assets/mp/beae09d8.png","assets/mp/8ddb5da9.png","assets/mp/993e1a2b.png","assets/mp/1046d8d2.png","assets/mp/512fddfd.jpg","assets/mp/17e657e2.png","assets/mp/184c87ea.png","assets/mp/03292458.png","assets/mp/97e8d9dd.png","assets/mp/e2613cd9.png","assets/mp/5005b4e2.png"],
-  "s1":["assets/mp/04933a73.png","assets/mp/3036b04d.png","assets/mp/a27c5c2d.png","assets/mp/512fddfd.jpg","assets/mp/17e657e2.png"],
-  "s3":["assets/mp/e2e58664.png","assets/mp/5571ebc1.png","assets/mp/89e6cf1e.png","assets/mp/c5cc460f.png","assets/mp/95d80421.png","assets/mp/64309503.png","assets/mp/b52216e8.png","assets/mp/e9dfed5c.png"],
-  "scb":["assets/mp/e2e58664.png","assets/mp/5571ebc1.png","assets/mp/2e4405c0.png","assets/mp/cc68aa1d.png","assets/mp/61a53135.png","assets/mp/4d6924c2.png"],
-  "sed":["assets/mp/1195d2f2.png","assets/mp/8efc9237.png","assets/mp/e5101715.png","assets/mp/2f06c545.png"],
-  "s4":["assets/mp/13cc6279.png","assets/mp/eeaa3182.png","assets/mp/6184a5c1.png","assets/mp/b5c08180.png"],
-  "sst":["assets/mp/a8ae1cd3.png","assets/mp/5141c4f8.jpg","assets/mp/4bb8bd30.png"],
-  "sctc":["assets/mp/53bf9978.png","assets/mp/3ff192a6.png","assets/mp/e3545271.png","assets/mp/ab38d415.png"],
-  "s5":["assets/mp/76c71daf.png","assets/mp/f49b238a.png","assets/mp/8655f926.png","assets/mp/a451b878.png","assets/mp/9abc79ee.png","assets/mp/97321805.png","assets/mp/a183f2d6.png","assets/mp/42febbcf.png","assets/mp/8d82f438.png","assets/mp/363ad7f0.png","assets/mp/02473aaa.png","assets/mp/ce17f4b6.png"],
-  "sprint":["assets/mp/1a122567.png","assets/mp/7796e995.png","assets/mp/15ceaef2.png","assets/mp/1457a050.png"],
-  "sapt":["assets/mp/d1ea83ec.png","assets/mp/7796e995.png","assets/mp/aa77ed3f.png","assets/mp/977e33f0.png"],
-  "slog":["assets/mp/7796e995.png","assets/mp/15ceaef2.png","assets/mp/746fd1fd.png"],
-  "svas":["assets/mp/80e138ff.png","assets/mp/d43889d1.png","assets/mp/16c37905.png","assets/mp/5c878d8a.png","assets/mp/d903be07.png","assets/mp/82feac80.png","assets/mp/b068ac83.png","assets/mp/d953f304.png"],
-  "s6":["assets/mp/daa32f3c.png","assets/mp/63ce8ac7.png","assets/mp/0cad6f9b.png"],
-  "smo":["assets/mp/3b33ee77.png","assets/mp/e2cc69df.png","assets/mp/1f702f63.png","assets/mp/fa45c913.png","assets/mp/84714420.png","assets/mp/b9b04330.png"],
-  "s7":["assets/mp/6f60a414.png","assets/mp/883b6361.png","assets/mp/0d07a4e2.png","assets/mp/ca5658e8.png","assets/mp/23cf3739.png"],
-  "srt":["assets/mp/3d413bed.png","assets/mp/95fc290c.png","assets/mp/5b7a78a8.png","assets/mp/88ae9c06.png","assets/mp/be10cb7a.png","assets/mp/b2a2ff4b.png","assets/mp/6dd346f1.png","assets/mp/c59b0d10.png","assets/mp/8ded56ff.png","assets/mp/50ef34db.png"]
+ "m1": [
+  "assets/m1_1.jpg",
+  "assets/m1_2.jpg",
+  "assets/m1_3.jpg",
+  "assets/m1_4.jpg",
+  "assets/m1_5.jpg",
+  "assets/m1_6.jpg"
+ ],
+ "m2": [
+  "assets/m2_1.jpg",
+  "assets/m2_2.jpg",
+  "assets/m2_3.jpg",
+  "assets/m2_4.jpg",
+  "assets/m2_5.jpg",
+  "assets/m2_6.jpg",
+  "assets/m2_7.jpg"
+ ],
+ "m3": [
+  "assets/m3_1.jpg",
+  "assets/m3_2.jpg",
+  "assets/m3_3.jpg",
+  "assets/m3_4.jpg",
+  "assets/m3_5.jpg",
+  "assets/m3_6.jpg",
+  "assets/m3_7.jpg",
+  "assets/m3_8.jpg",
+  "assets/m3_9.jpg",
+  "assets/m3_10.jpg",
+  "assets/m3_11.jpg",
+  "assets/m3_12.jpg",
+  "assets/m3_13.jpg",
+  "assets/m3_14.jpg",
+  "assets/m3_15.jpg",
+  "assets/m3_16.jpg",
+  "assets/m3_17.jpg"
+ ],
+ "m4": [
+  "assets/m4_1.jpg",
+  "assets/m4_2.jpg",
+  "assets/m4_3.jpg",
+  "assets/m4_4.jpg",
+  "assets/m4_5.jpg",
+  "assets/m4_6.jpg",
+  "assets/m4_8.jpg",
+  "assets/m4_9.jpg",
+  "assets/m4_10.jpg",
+  "assets/m4_11.jpg",
+  "assets/m4_12.jpg",
+  "assets/m4_13.jpg",
+  "assets/m4_14.jpg",
+  "assets/m4_15.jpg",
+  "assets/m4_16.jpg",
+  "assets/m4_17.jpg",
+  "assets/m4_18.jpg",
+  "assets/m4_19.jpg",
+  "assets/m4_20.jpg",
+  "assets/m4_21.jpg",
+  "assets/m4_22.jpg",
+  "assets/m4_23.jpg"
+ ],
+ "m5": [
+  "assets/m5_1.jpg",
+  "assets/m5_2.jpg",
+  "assets/m5_3.jpg",
+  "assets/m5_4.jpg",
+  "assets/m5_5.jpg",
+  "assets/m5_6.jpg",
+  "assets/m5_7.jpg",
+  "assets/m5_8.jpg",
+  "assets/m5_9.jpg",
+  "assets/m5_10.jpg",
+  "assets/m5_11.jpg",
+  "assets/m5_12.jpg",
+  "assets/m5_13.jpg",
+  "assets/m5_14.jpg",
+  "assets/m5_15.jpg"
+ ],
+ "m7": [
+  "assets/m7_1.jpg",
+  "assets/m7_2.jpg",
+  "assets/m7_3.jpg",
+  "assets/m7_4.jpg",
+  "assets/m7_5.jpg",
+  "assets/m7_6.jpg",
+  "assets/m7_7.jpg",
+  "assets/m7_8.jpg"
+ ],
+ "m8": [
+  "assets/m8_1.jpg",
+  "assets/m8_2.jpg",
+  "assets/m8_3.jpg",
+  "assets/m8_4.jpg",
+  "assets/m8_5.jpg",
+  "assets/m8_6.jpg",
+  "assets/m8_7.jpg"
+ ],
+ "m9": [
+  "assets/m9_1.jpg",
+  "assets/m9_2.jpg",
+  "assets/m9_3.jpg",
+  "assets/m9_4.jpg",
+  "assets/m9_5.jpg"
+ ],
+ "m10": [
+  "assets/m10_1.jpg",
+  "assets/m10_2.jpg",
+  "assets/m10_3.jpg",
+  "assets/m10_4.jpg",
+  "assets/m10_5.jpg",
+  "assets/m10_6.jpg",
+  "assets/m10_7.jpg",
+  "assets/m10_8.jpg"
+ ],
+ "pdd": [
+  "assets/pdd_1.jpg",
+  "assets/pdd_2.jpg",
+  "assets/pdd_3.jpg",
+  "assets/pdd_4.jpg",
+  "assets/pdd_5.jpg",
+  "assets/pdd_6.jpg",
+  "assets/pdd_7.jpg",
+  "assets/pdd_8.jpg",
+  "assets/pdd_9.jpg",
+  "assets/pdd_10.jpg",
+  "assets/pdd_11.jpg",
+  "assets/pdd_12.jpg",
+  "assets/pdd_13.jpg",
+  "assets/pdd_14.jpg",
+  "assets/pdd_15.jpg",
+  "assets/pdd_16.jpg",
+  "assets/pdd_17.jpg",
+  "assets/pdd_18.jpg",
+  "assets/pdd_19.jpg",
+  "assets/pdd_20.jpg",
+  "assets/pdd_21.jpg",
+  "assets/pdd_22.jpg",
+  "assets/pdd_23.jpg",
+  "assets/pdd_24.jpg",
+  "assets/pdd_25.jpg",
+  "assets/pdd_26.jpg",
+  "assets/pdd_27.jpg",
+  "assets/pdd_28.jpg",
+  "assets/pdd_29.jpg",
+  "assets/pdd_30.jpg",
+  "assets/pdd_31.jpg",
+  "assets/pdd_32.jpg",
+  "assets/pdd_33.jpg",
+  "assets/pdd_34.jpg",
+  "assets/pdd_35.jpg",
+  "assets/pdd_36.jpg",
+  "assets/pdd_37.jpg",
+  "assets/pdd_38.jpg",
+  "assets/pdd_39.jpg",
+  "assets/pdd_40.jpg",
+  "assets/pdd_41.jpg",
+  "assets/pdd_42.jpg",
+  "assets/pdd_43.jpg",
+  "assets/pdd_44.jpg",
+  "assets/pdd_45.jpg",
+  "assets/pdd_46.jpg",
+  "assets/pdd_47.jpg",
+  "assets/pdd_48.jpg",
+  "assets/pdd_49.jpg",
+  "assets/pdd_50.jpg",
+  "assets/pdd_51.jpg",
+  "assets/pdd_52.jpg",
+  "assets/pdd_53.jpg",
+  "assets/pdd_54.jpg",
+  "assets/pddqa/qa_01_unauth.jpeg",
+  "assets/pddqa/qa_02_bindrel.png",
+  "assets/pddqa/qa_03_emptyorder1.png",
+  "assets/pddqa/qa_04_emptyorder2.png",
+  "assets/pddqa/qa_05_transferfail.png",
+  "assets/pddqa/qa_06_split.png",
+  "assets/pddqa/qa_07_mergepart.png",
+  "assets/pddqa/qa_08_garbled.png",
+  "assets/pddqa/qa_09_manualdl.png",
+  "assets/pddqa/qa_10_repush.png"
+ ],
+ "s0": [
+  "assets/mp/410de0e8.png",
+  "assets/mp/beae09d8.png",
+  "assets/mp/8ddb5da9.png",
+  "assets/mp/993e1a2b.png",
+  "assets/mp/1046d8d2.png",
+  "assets/mp/512fddfd.jpg",
+  "assets/mp/17e657e2.png",
+  "assets/mp/184c87ea.png",
+  "assets/mp/03292458.png",
+  "assets/mp/97e8d9dd.png",
+  "assets/mp/e2613cd9.png",
+  "assets/mp/5005b4e2.png"
+ ],
+ "s1": [
+  "assets/mp/04933a73.png",
+  "assets/mp/3036b04d.png",
+  "assets/mp/a27c5c2d.png",
+  "assets/mp/512fddfd.jpg",
+  "assets/mp/17e657e2.png"
+ ],
+ "s3": [
+  "assets/mp/e2e58664.png",
+  "assets/mp/5571ebc1.png",
+  "assets/mp/89e6cf1e.png",
+  "assets/mp/c5cc460f.png",
+  "assets/mp/95d80421.png",
+  "assets/mp/64309503.png",
+  "assets/mp/b52216e8.png",
+  "assets/mp/e9dfed5c.png"
+ ],
+ "scb": [
+  "assets/mp/e2e58664.png",
+  "assets/mp/5571ebc1.png",
+  "assets/mp/2e4405c0.png",
+  "assets/mp/cc68aa1d.png",
+  "assets/mp/61a53135.png",
+  "assets/mp/4d6924c2.png"
+ ],
+ "sed": [
+  "assets/mp/1195d2f2.png",
+  "assets/mp/8efc9237.png",
+  "assets/mp/e5101715.png",
+  "assets/mp/2f06c545.png"
+ ],
+ "s4": [
+  "assets/mp/13cc6279.png",
+  "assets/mp/eeaa3182.png",
+  "assets/mp/6184a5c1.png",
+  "assets/mp/b5c08180.png"
+ ],
+ "sst": [
+  "assets/mp/a8ae1cd3.png",
+  "assets/mp/5141c4f8.jpg",
+  "assets/mp/4bb8bd30.png"
+ ],
+ "sctc": [
+  "assets/mp/53bf9978.png",
+  "assets/mp/3ff192a6.png",
+  "assets/mp/e3545271.png",
+  "assets/mp/ab38d415.png"
+ ],
+ "s5": [
+  "assets/mp/76c71daf.png",
+  "assets/mp/f49b238a.png",
+  "assets/mp/8655f926.png",
+  "assets/mp/a451b878.png",
+  "assets/mp/9abc79ee.png",
+  "assets/mp/97321805.png",
+  "assets/mp/a183f2d6.png",
+  "assets/mp/42febbcf.png",
+  "assets/mp/8d82f438.png",
+  "assets/mp/363ad7f0.png",
+  "assets/mp/02473aaa.png",
+  "assets/mp/ce17f4b6.png"
+ ],
+ "sprint": [
+  "assets/mp/1a122567.png",
+  "assets/mp/7796e995.png",
+  "assets/mp/15ceaef2.png",
+  "assets/mp/1457a050.png"
+ ],
+ "sapt": [
+  "assets/mp/d1ea83ec.png",
+  "assets/mp/7796e995.png",
+  "assets/mp/aa77ed3f.png",
+  "assets/mp/977e33f0.png"
+ ],
+ "slog": [
+  "assets/mp/7796e995.png",
+  "assets/mp/15ceaef2.png",
+  "assets/mp/746fd1fd.png"
+ ],
+ "svas": [
+  "assets/mp/80e138ff.png",
+  "assets/mp/d43889d1.png",
+  "assets/mp/16c37905.png",
+  "assets/mp/5c878d8a.png",
+  "assets/mp/d903be07.png",
+  "assets/mp/82feac80.png",
+  "assets/mp/b068ac83.png",
+  "assets/mp/d953f304.png"
+ ],
+ "s6": [
+  "assets/mp/daa32f3c.png",
+  "assets/mp/63ce8ac7.png",
+  "assets/mp/0cad6f9b.png"
+ ],
+ "smo": [
+  "assets/mp/3b33ee77.png",
+  "assets/mp/e2cc69df.png",
+  "assets/mp/1f702f63.png",
+  "assets/mp/fa45c913.png",
+  "assets/mp/84714420.png",
+  "assets/mp/b9b04330.png"
+ ],
+ "s7": [
+  "assets/mp/6f60a414.png",
+  "assets/mp/883b6361.png",
+  "assets/mp/0d07a4e2.png",
+  "assets/mp/ca5658e8.png",
+  "assets/mp/23cf3739.png"
+ ],
+ "srt": [
+  "assets/mp/3d413bed.png",
+  "assets/mp/95fc290c.png",
+  "assets/mp/5b7a78a8.png",
+  "assets/mp/88ae9c06.png",
+  "assets/mp/be10cb7a.png",
+  "assets/mp/b2a2ff4b.png",
+  "assets/mp/6dd346f1.png",
+  "assets/mp/c59b0d10.png",
+  "assets/mp/8ded56ff.png",
+  "assets/mp/50ef34db.png"
+ ]
 };
 
 /* ================= 渲染 ================= */
@@ -2502,11 +2986,21 @@ function stepHTML(m,s,i,tab){
   let chip='';
   if(s.pc) chip=`<span class="chip chip-pc" onclick="goto('${s.pcTarget.tab}','${s.pcTarget.module}')">⚠️ 需在 PC 端完成 ›</span>`;
   else if(s.todo) chip=`<span class="chip chip-todo">正文待补</span>`;
-  // 图文结合：d 里字符串=操作文字行，数组/数字=紧跟其后的截图
-  const segs=Array.isArray(s.d)?s.d:(s.d?[s.d]:[]);
-  let flow=segs.map(seg=> isImgSeg(seg) ? imgRow(m, Array.isArray(seg)?seg:[seg], s.t) : `<div class="ln">${esc(seg)}</div>`).join('');
-  const hasInline=segs.some(isImgSeg);
-  if(!hasInline && s.img && s.img.length) flow+=stepImgs(m,s); // 兼容旧写法：文字说完再放图
+  let flow;
+  if(s.qa&&s.qa.length){
+    // 常见问题 QA：问答块，问题带 Q 徽标，答案可带内嵌截图
+    flow=s.qa.map(item=>{
+      const ans=(Array.isArray(item.a)?item.a:[item.a]).map(t=>esc(t)).join('<br>');
+      const img=(item.img&&item.img.length)?imgRow(m,item.img,'常见问题 QA'):'';
+      return `<div class="qa-item"><div class="qa-q">${esc(item.q)}</div><div class="qa-a"><span class="qa-a-tag">A：</span>${ans}</div>${img}</div>`;
+    }).join('');
+  } else {
+    // 图文结合：d 里字符串=操作文字行，数组/数字=紧跟其后的截图
+    const segs=Array.isArray(s.d)?s.d:(s.d?[s.d]:[]);
+    flow=segs.map(seg=> isImgSeg(seg) ? imgRow(m, Array.isArray(seg)?seg:[seg], s.t) : `<div class="ln">${esc(seg)}</div>`).join('');
+    const hasInline=segs.some(isImgSeg);
+    if(!hasInline && s.img && s.img.length) flow+=stepImgs(m,s); // 兼容旧写法：文字说完再放图
+  }
   const rels=(s.rel&&s.rel.length)?`<div class="rels"><span class="rl-lbl">🔗 相关步骤：</span>${s.rel.map(r=>`<span class="rel" onclick="goto('${r.tab||tab}','${r.to}')">${esc(r.label)} ›</span>`).join('')}</div>`:'';
   const lnks=(s.links&&s.links.length)?`<div class="step-links">${s.links.map(linkChip).join('')}</div>`:'';
   const qr=s.qr?`<div class="step-qr"><div class="th qr-th" data-cap="${esc(s.qrCap||'小程序码')}"><img src="${iu(s.qr)}" alt="${esc(s.qrCap||'小程序码')}" loading="lazy" decoding="async" onload="this.closest('.th').classList.add('ld')"><span class="sk">加载中…</span><span class="mag">🔍 点击放大</span></div><div class="qr-txt">${esc(s.qrCap||'微信扫码进入小程序')}${s.qrSub?`<span class="qr-sub">${esc(s.qrSub)}</span>`:''}</div></div>`:'';
@@ -2524,7 +3018,11 @@ function modTable(m){
 function moduleHTML(m,tab){
   const note=m.note?`<div class="tip${m.noteWarn?' warn':''}"><span class="e">${m.noteWarn?'⚠️':'💡'}</span><div>${esc(m.note)}</div></div>`:'';
   const note2=m.note2?`<div class="tip"><span class="e">🔁</span><div>${esc(m.note2)}</div></div>`:'';
-  const links=(m.links&&m.links.length)?`<div class="mod-links"><span class="ml-lbl">📎 相关资料：</span>${m.links.map(linkChip).join('')}</div>`:'';
+  const qaIdx=m.steps.findIndex(s=>s.qa&&s.qa.length);
+  const renderLink=l=> l.jumpQa
+    ? `<a class="lnk" href="javascript:void(0)" onclick="jumpTo('${m.id}-${qaIdx}')">📄 ${esc(l.t)}</a>`
+    : linkChip(l);
+  const links=(m.links&&m.links.length)?`<div class="mod-links"><span class="ml-lbl">📎 相关资料：</span>${m.links.map(renderLink).join('')}</div>`:'';
   const login=m.login?`<div class="mod-login">${linkChip(m.login)}</div>`:'';
   return `<section class="mod" id="${m.id}">
     <div class="mod-h"><div class="mod-ic">${m.ic}</div><div><div class="kicker">${stg(m.stage).name}</div><h2>${m.title}</h2></div></div>
@@ -2571,10 +3069,32 @@ function renderFlow(tab){
     `<div class="layout"><nav class="toc">${tocHTML(mods,stages)}</nav><main class="body">${content}</main></div>`;
   spy();
 }
+function faqItemHTML(gi,ii,f){
+  const id='faq-'+gi+'-'+ii;
+  const kw=esc((f.q+' '+f.a).toLowerCase());
+  return `<div class="faq-item" id="${id}" data-kw="${kw}"><button class="faq-q" onclick="document.getElementById('${id}').classList.toggle('open')">${esc(f.q)}<span class="arw">▾</span></button><div class="faq-a">${esc(f.a)}</div></div>`;
+}
 function renderFAQ(){
-  const items=FAQ.map((f,i)=>`<div class="faq-item" id="faq${i}"><button class="faq-q" onclick="document.getElementById('faq${i}').classList.toggle('open')">${esc(f.q)}<span class="arw">▾</span></button><div class="faq-a">${esc(f.a)}</div></div>`).join('');
+  const total=FAQ.reduce((s,g)=>s+g.items.length,0);
+  const groups=FAQ.map((g,gi)=>`<div class="faq-cat" data-cat="${gi}"><div class="faq-cat-h"><span class="bar"></span>${esc(g.cat)}<span class="faq-cat-n">${g.items.length}</span></div>${g.items.map((f,ii)=>faqItemHTML(gi,ii,f)).join('')}</div>`).join('');
   $('#panel-faq').innerHTML=`<div class="faq"><div class="faq-h"><span class="bar"></span>常 见 问 题（PC / 小程序 通用）</div>
-    <div class="tip"><span class="e">💡</span><div>点击问题展开答案，正文取自源手册「菜鸟云仓常见问题」。</div></div>${items}</div>`;
+    <div class="tip"><span class="e">💡</span><div>共 ${total} 条，按业务环节分类，点击问题展开答案。可输入关键词（如"推单""拦截""熔断""库存"）快速筛选。</div></div>
+    <div class="faq-search"><input id="faqSearch" type="text" placeholder="🔍 搜索问题关键词…" oninput="faqFilter(this.value)"><span class="faq-search-cnt" id="faqCnt">显示全部 ${total} 条</span></div>
+    ${groups}</div>`;
+}
+function faqFilter(v){
+  v=(v||'').trim().toLowerCase();
+  let shown=0;
+  document.querySelectorAll('#panel-faq .faq-cat').forEach(cat=>{
+    let catShown=0;
+    cat.querySelectorAll('.faq-item').forEach(it=>{
+      const hit=!v||it.dataset.kw.indexOf(v)>=0;
+      it.style.display=hit?'':'none';
+      if(hit){catShown++;shown++;} else it.classList.remove('open');
+    });
+    cat.style.display=catShown?'':'none';
+  });
+  const c=document.getElementById('faqCnt'); if(c) c.textContent=v?('匹配 '+shown+' 条'):('显示全部 '+document.querySelectorAll('#panel-faq .faq-item').length+' 条');
 }
 
 /* ================= 交互 ================= */
@@ -2590,6 +3110,7 @@ function switchTab(name){
   window.scrollTo({top:0,behavior:'smooth'});
 }
 function jumpStage(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
+function jumpTo(id){const el=document.getElementById(id);if(!el)return;el.scrollIntoView({behavior:'smooth',block:'start'});el.classList.remove('flash');void el.offsetWidth;el.classList.add('flash');setTimeout(()=>el.classList.remove('flash'),1400);}
 function goto(tab,mod){
   if(tab!==curTab) switchTab(tab);
   setTimeout(()=>{const el=document.getElementById(mod);if(!el)return;
