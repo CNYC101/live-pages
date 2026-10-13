@@ -153,6 +153,31 @@
   .step-qr .qr-txt .qr-sub{display:block;font-size:12.5px;color:var(--ink-3);font-weight:500;margin-top:5px}
   @media (max-width:520px){.step-qr{flex-direction:column;align-items:flex-start}}
 
+  /* 三条支线：模块归属标签 */
+  .branch-badge{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:800;border-radius:20px;padding:3px 10px;margin-left:10px;vertical-align:2px;white-space:nowrap}
+  .branch-free{color:#0b4fd1;background:#eaf1ff;border:1px solid #cfe0ff}
+  .branch-qimen{color:#00796a;background:#e3faf5;border:1px solid #b6ece2}
+  .branch-pdd{color:#b34a12;background:#fff1e8;border:1px solid #ffd9c2}
+  .toc a .tdot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;vertical-align:1px}
+  .tdot.free{background:var(--brand)} .tdot.qimen{background:var(--accent)} .tdot.pdd{background:var(--warn)}
+
+  /* 三条支线：决策卡（先看这里） */
+  .branchcard{margin:18px 30px 4px;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:18px 20px 20px}
+  .branchcard .bc-h{font-size:16px;font-weight:800;color:var(--ink);display:flex;align-items:center;gap:8px;margin-bottom:4px}
+  .branchcard .bc-h .bar{width:4px;height:17px;background:var(--brand);border-radius:2px}
+  .branchcard .bc-sub{font-size:13px;color:var(--ink-3);margin-bottom:14px}
+  .branchcard .bc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .bc-opt{border:1px solid var(--line);border-radius:14px;padding:16px 16px 15px;background:#fbfcfe;display:flex;flex-direction:column;gap:8px;transition:.15s;cursor:pointer}
+  .bc-opt:hover{border-color:var(--brand);box-shadow:var(--shadow-h);transform:translateY(-2px)}
+  .bc-opt .tag{align-self:flex-start;font-size:11.5px;font-weight:800;border-radius:20px;padding:3px 10px}
+  .bc-opt.free .tag{color:#0b4fd1;background:#eaf1ff} .bc-opt.qimen .tag{color:#00796a;background:#e3faf5} .bc-opt.pdd .tag{color:#b34a12;background:#fff1e8}
+  .bc-opt .ic{font-size:26px;line-height:1}
+  .bc-opt .t{font-size:15px;font-weight:800;color:var(--ink)}
+  .bc-opt .d{font-size:12.8px;color:var(--ink-2);line-height:1.55}
+  .bc-opt .go{margin-top:auto;font-size:13px;font-weight:700;color:var(--brand)}
+  .bc-opt.free{border-top:3px solid var(--brand)} .bc-opt.qimen{border-top:3px solid var(--accent)} .bc-opt.pdd{border-top:3px solid var(--warn)}
+  @media (max-width:820px){.branchcard .bc-grid{grid-template-columns:1fr}}
+
   /* FAQ */
   .faq{padding:24px 30px 40px}
   .faq-h{font-size:18px;font-weight:800;display:flex;align-items:center;gap:8px;margin-bottom:6px}
@@ -238,6 +263,31 @@ const MP_STAGES = [
   {id:'g5', ic:'🗂️', name:'其他',      sub:'联系人 · 仓库 · 退供 · 账单开票'},
 ];
 function stagesFor(tab){return tab==='mp'?MP_STAGES:STAGES;}
+
+/* ================= 三条支线（ERP 对接分流）元数据 ================= */
+/* 支线一 free：无 ERP → 用菜鸟免费 ERP（CNBP），主场景；店铺授权/商货品绑定/备货/发货都在菜鸟系统 */
+/* 支线二 qimen：已有自己的 ERP → 奇门标准接口对接，部分动作在商家 ERP、部分在菜鸟系统（源手册 1.1+1.2） */
+/* 支线三 pdd：有拼多多店铺 → 菜鸟 ERP 不支持拼多多，二选一：买管易云 ERP 自动推单 / 不则人工建单 */
+const BRANCHES={
+  free:{cls:'free',label:'① 用菜鸟免费 ERP',color:'#1E6FFF'},
+  qimen:{cls:'qimen',label:'② 已有自己的 ERP（奇门对接）',color:'#00C2A8'},
+  pdd:{cls:'pdd',label:'③ 有拼多多店铺',color:'#FF7A45'},
+};
+function branchBadge(m){const b=BRANCHES[m.branch];return b?`<span class="branch-badge branch-${b.cls}">${b.label}</span>`:'';}
+/* 决策卡：PC 版放「ERP 对接」阶段顶部；小程序版放最前面，三选一引导 */
+function branchCardHTML(tab){
+  const T = tab==='mp'
+    ? {free:'sst', qimen:'mp-erp', pdd:'pddm'}
+    : {free:'m3',  qimen:'erp-sign', pdd:'pdd'};
+  const opts=[
+    {cls:'free',ic:'🟦',t:'我没有 ERP，用菜鸟免费的',d:'绝大多数小微商家的主场景。店铺授权、建货品、绑定、备货入仓、推单发货全程在菜鸟云仓系统（含免费 ERP）里完成，不用另外买系统。',go:'看「店铺授权 →」',to:T.free},
+    {cls:'qimen',ic:'🔌',t:'我已经有了自己的 ERP',d:'已在用聚水潭 / 旺店通 / 优易等外部 ERP，想通过标准接口（奇门）把 ERP 和菜鸟系统打通、由 ERP 推单到云仓。签约与对接见对应模块。',go:'看「ERP 商家签约 →」',to:T.qimen},
+    {cls:'pdd',ic:'🧩',t:'我要开拼多多店铺',d:'菜鸟 ERP 暂不支持拼多多订单。二选一：① 购买菜鸟提供的管易云 ERP 自动拉单推单；② 不买的话只能人工建单发货。',go:'看「拼多多 · 管易云对接 →」',to:T.pdd},
+  ];
+  return `<div class="branchcard"><div class="bc-h"><span class="bar"></span>先看这里 · 你的 ERP 情况决定走哪条流程</div>
+    <div class="bc-sub">下面各模块默认按最常见的<b>支线①（用菜鸟免费 ERP）</b>展开；若你属于支线②或③，点对应卡片直达。</div>
+    <div class="bc-grid">${opts.map(o=>`<div class="bc-opt ${o.cls}" onclick="jumpTo('${o.to}')"><span class="tag">${BRANCHES[o.cls].label}</span><div class="ic">${o.ic}</div><div class="t">${o.t}</div><div class="d">${o.d}</div><div class="go">${o.go}</div></div>`).join('')}</div></div>`;
+}
 
 /* ================= 数据：PC / 小程序 ================= */
 /* step: t 标题 | d 说明(数组/字符串) | img 该步截图在源文档中的图序号 | pc+pcTarget 需转PC | rel 互链[{to,label,tab?}] | todo 正文待补 */
@@ -746,10 +796,11 @@ const GUIDE = {
    {
     "id": "m2",
     "stage": "st1",
+    "branch": "free",
     "ic": "📝",
     "title": "商家签约",
-    "desc": "未使用外部 ERP 的商家，注册并签约菜鸟云仓的流程。",
-    "note": "若你已购买外部 ERP（旺店通、聚水潭、优易等）并需通过 ERP 管单，请走 ERP 系统对接流程。",
+    "desc": "未使用外部 ERP 的商家，注册并签约菜鸟云仓的流程（用菜鸟免费 ERP 的主场景）。",
+    "note": "若你已购买外部 ERP（旺店通、聚水潭、优易等）并需通过 ERP 管单，请改走下方「ERP 商家签约（外部 ERP）→ ERP 系统对接」支线。",
     "noteWarn": 1,
     "steps": [
      {
@@ -801,10 +852,11 @@ const GUIDE = {
    {
     "id": "m3",
     "stage": "st2",
+    "branch": "free",
     "ic": "🏬",
     "title": "店铺授权",
     "desc": "把各平台店铺授权给云仓，用于自动拉单（使用菜鸟 ERP 时）。",
-    "note": "仅在使用菜鸟 ERP 时需要；使用外部 ERP 的商家在自家 ERP 操作即可。",
+    "note": "仅支线①（用菜鸟免费 ERP）需要；使用外部 ERP 的商家在自家 ERP 操作即可（见「ERP 系统对接」），拼多多店铺见「拼多多」支线。",
     "steps": [
      {
       "t": "创建店铺",
@@ -916,10 +968,11 @@ const GUIDE = {
    {
     "id": "m4",
     "stage": "st2",
+    "branch": "free",
     "ic": "📦",
     "title": "商货品管理 · 绑定",
     "desc": "建货品 / 组合品，把线上 SKU 与仓库货品绑定，并选择包装方案。",
-    "note": "使用菜鸟 ERP 时需要；外部 ERP 在自家系统操作。",
+    "note": "支线①（用菜鸟免费 ERP）在这里建品、绑定；使用外部 ERP 的商家，货品由自家 ERP 同步过来，但「包装方案」仍需在菜鸟系统这里维护（见「ERP 系统对接」）。",
     "steps": [
      {
       "t": "Step1 新增货品",
@@ -1080,8 +1133,170 @@ const GUIDE = {
     ]
    },
    {
+    "id": "erp-sign",
+    "stage": "st2",
+    "branch": "qimen",
+    "ic": "📝",
+    "title": "ERP 商家签约（外部 ERP）",
+    "desc": "已购买外部 ERP（优易、旺店通、聚水潭等）且需要把 ERP 与菜鸟系统对接的商家，走这条签约流程；签约完成后继续看「ERP 系统对接」。",
+    "note": "如果你没有自己的外部 ERP，直接用菜鸟免费 ERP 即可，签约见上方「商家签约」；本模块只面向已有 ERP、要做系统对接的商家。",
+    "note2": "拼多多提示：要对接拼多多店铺必须使用自己的 ERP；如没有自己的 ERP，暂时只能通过手动下单在菜鸟云仓发货（见「拼多多 · 人工建单发货」）。",
+    "login": {
+     "u": "https://cnlogin.cainiao.com/login?isNewLogin=true&showae=true&showoa=true&showin=true&loginImplicitEnterprise=true&redirectURL=http%3A%2F%2Fb.cainiao.com%2Fbusiness%2Fdsc%2Foms%2Fgoods%2FgoodsManageNew",
+     "t": "点击进入 · 菜鸟登录（企业账号）"
+    },
+    "steps": [
+     {
+      "t": "登录 / 注册账号",
+      "d": [
+       "用菜鸟账号登录，可选淘宝免登；用于对接的淘宝账号类型需要为「企业账号」。",
+       [
+        1
+       ]
+      ]
+     },
+     {
+      "t": "个人账号需先切换企业账号",
+      "d": [
+       "若你的淘宝账号是个人账号、且没有企业账号，登录后会提示「请切换成企业账号再签约」，点弹窗里的「切换账号」即可。",
+       [
+        2
+       ]
+      ]
+     },
+     {
+      "t": "点击免费注册",
+      "d": [
+       "需要新注册时，点登录页的「免费注册」。",
+       [
+        3
+       ]
+      ]
+     },
+     {
+      "t": "填写企业账号注册信息",
+      "d": [
+       "按页面填写电子邮箱、账号名、登录密码、手机号码、公司名称（公司名称可自定义、不做校验），勾选协议后点「同意并注册」。",
+       [
+        4
+       ]
+      ]
+     },
+     {
+      "t": "填写意向城市与手机号",
+      "d": [
+       "选择意向发货城市（后续有变更可联系菜鸟负责人修改）、输入正常使用的手机号、勾选同意《菜鸟云仓仓配服务协议》，点「确认」即签约完成。",
+       [
+        5
+       ]
+      ]
+     },
+     {
+      "t": "绑定支付宝免密代扣",
+      "d": [
+       "扫码完成支付宝免密支付安全验证（也可点「切换 PC 登陆签约」），验证后点「完成签约」。",
+       [
+        6
+       ]
+      ]
+     },
+     {
+      "t": "扫码添加小二 · 进入商家中心",
+      "d": [
+       "签约完成后，扫码添加企业微信对接小二，由小二分配实施同学协助你做系统对接；点「进入商家中心」继续。",
+       [
+        7
+       ]
+      ],
+      "rel": [
+       {
+        "to": "erp-link",
+        "label": "ERP 系统对接"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "erp-link",
+    "stage": "st2",
+    "branch": "qimen",
+    "ic": "🔌",
+    "title": "ERP 系统对接（奇门接口）",
+    "desc": "系统对接 = 已在用外部 ERP（聚水潭、旺店通等）的商家，通过标准接口（奇门）把 ERP 与菜鸟系统打通，之后由你自己的 ERP 推单到菜鸟云仓。",
+    "note": "使用外部 ERP 时，除「同步货品、维护包装方案、入库单预约 / 打印箱唛、设置自动审单」等少数动作需在菜鸟平台操作，其余流程都在你自己的 ERP 上完成。",
+    "note2": "菜鸟侧提供的信息（货主编码、appkey、仓库编码、仓内快递名称及编码）可联系 BD 小二，由小二分配对应的实施同学对接。常见对接 ERP：聚水潭、旺店通、万里牛、吉客云、优易、管家婆、快麦、网店管家、管易云，各自操作手册可找对接小二或你的 ERP 客服获取。",
+    "table": {
+     "head": ["动作", "在哪里操作"],
+     "rows": [
+      ["发起奇门上线申请", "你的 ERP（联系 ERP 实施发起）"],
+      ["ERP 中创建仓库 / 快递映射配置", "你的 ERP"],
+      ["同步货品到菜鸟仓", "你的 ERP 发起 → 菜鸟系统查看"],
+      ["维护货品包装方案", "菜鸟系统（CNBP）"],
+      ["创建采购入库单", "你的 ERP"],
+      ["入库单预约 / 打印箱唛", "菜鸟系统（CNBP）"],
+      ["审核 · 推单发货", "你的 ERP（默认自动审核）"]
+     ]
+    },
+    "steps": [
+     {
+      "t": "一、登录 CNBP",
+      "d": [
+       "登录 CNBP，登录账号为注册时的「登录名 / 淘宝账号」（不要使用手机号）。",
+       "地址：https://b.cainiao.com/business/dsc/oms/home"
+      ]
+     },
+     {
+      "t": "二、ERP 基础信息配置",
+      "d": [
+       "1、发起奇门申请：菜鸟侧提供「货主编码、appkey」两个信息，商家联系自己的 ERP 实施发起 WMS 对接需求，由 ERP 侧发起奇门上线申请（聚水潭可自行申请）。",
+       "2、ERP 中创建仓库：菜鸟侧提供「仓库编码」，在 ERP 中对应创建仓库。",
+       "3、快递映射配置：菜鸟侧提供仓内快递信息（名称及编码），在 ERP 中对应配置。"
+      ]
+     },
+     {
+      "t": "三、同步货品",
+      "d": [
+       "把需要入仓的货品，在你的 ERP 中同步至 WMS；同步完成后可在菜鸟系统「商货品 - 货品管理」查看。",
+       "地址：https://b.cainiao.com/business/dsc/oms/goods/goodsManageNew",
+       [
+        1
+       ]
+      ]
+     },
+     {
+      "t": "四、选择包装方案",
+      "d": [
+       "货品同步到菜鸟系统后，需要在菜鸟系统为每个货品选择包装方案；后续新增的新品，依旧用同样方式选择包装方案。"
+      ],
+      "rel": [
+       {
+        "to": "m4",
+        "label": "商货品管理 · 绑定（包装方案）"
+       }
+      ]
+     },
+     {
+      "t": "五、采购入库单预约",
+      "d": [
+       "入库单在你的 ERP 中创建、推送至菜鸟 WMS；推送成功后需要在菜鸟系统中预约入库单。",
+       "预约：选择货物预计到仓时间；暂时不确定可选个大概时间，后续可通过「改约」修改。",
+       "打印箱唛：即入库单的送货清单，需打印纸质或 PDF 版本，货物到仓与仓库交接时提供。",
+       "地址：https://b.cainiao.com/business/dsc/oms/purchase/unifyEntryOrder"
+      ],
+      "rel": [
+       {
+        "to": "m5",
+        "label": "建入库单"
+       }
+      ]
+     }
+    ]
+   },
+   {
     "id": "pdd",
     "stage": "st2",
+    "branch": "pdd",
     "ic": "🧩",
     "title": "拼多多店铺 · 管易云对接",
     "desc": "拼多多不支持 CNBP 直接对接，需单独购买管易云 ERP，在管易云拉单、绑货后推送到菜鸟仓发货。",
@@ -1090,6 +1305,57 @@ const GUIDE = {
     "note2": "订单流程：店铺拉单到管易云 → 管易云审核（默认自动）→ 推送到 CNBP → CNBP 审核（默认自动）→ 仓库发货 → 出库自动回传。",
     "links": PDD_LINKS,
     "steps": PDD_STEPS
+   },
+   {
+    "id": "pdd-manual",
+    "stage": "st2",
+    "branch": "pdd",
+    "ic": "✍️",
+    "title": "拼多多 · 人工建单发货",
+    "desc": "不购买管易云 ERP 时的替代方案：拼多多订单无法自动拉取，需要你在菜鸟系统里手工创建发货单，把每一单录入后推单到仓发货。",
+    "note": "人工建单适合单量很少的过渡期；单量上来后建议改用「管易云对接」自动拉单推单，避免手工录单出错、漏发。具体入口以你的对接小二指导为准。",
+    "noteWarn": 1,
+    "steps": [
+     {
+      "t": "先完成签约与基础备货",
+      "d": [
+       "人工建单前，同样要先完成商家签约、货品创建与包装方案维护、把货备入菜鸟仓（这些与「用菜鸟免费 ERP」一致，见上方对应模块）。"
+      ],
+      "rel": [
+       {
+        "to": "m2",
+        "label": "商家签约"
+       },
+       {
+        "to": "m4",
+        "label": "商货品管理 · 绑定"
+       },
+       {
+        "to": "m5",
+        "label": "建入库单"
+       }
+      ]
+     },
+     {
+      "t": "手工创建发货单",
+      "d": [
+       "在菜鸟系统「订单」里新建发货单（与补发、非平台订单同款入口），手动填写拼多多买家的收货人、电话、地址，选择发货仓库与货品、数量，提交后推单到仓。"
+      ],
+      "rel": [
+       {
+        "to": "smo",
+        "label": "手动创建发货单（图文步骤）",
+        "tab": "mp"
+       }
+      ]
+     },
+     {
+      "t": "仓库发货 · 回传单号",
+      "d": [
+       "仓库按手工单拣货打包发出后，把运单号回填到你的拼多多店铺后台完成发货。"
+      ]
+     }
+    ]
    },
    {
     "id": "m5",
@@ -1622,6 +1888,39 @@ const GUIDE = {
     ]
    },
    {
+    "id": "mp-erp",
+    "stage": "g1",
+    "branch": "qimen",
+    "ic": "🔌",
+    "title": "已有自己的 ERP · 走 PC 对接",
+    "desc": "如果你已经在用外部 ERP（聚水潭、旺店通、优易等），需要通过奇门接口把 ERP 与菜鸟系统打通，这部分签约与对接都在电脑端 CNBP 完成，小程序只做日常看单。",
+    "note": "外部 ERP 对接是 PC 端操作，下面两步点一下即可跳到 PC 版对应模块照做。",
+    "steps": [
+     {
+      "t": "ERP 商家签约（企业账号）",
+      "d": [
+       "在电脑端用企业账号登录 / 注册、签约并绑定支付宝免密代扣，扫码添加对接小二。"
+      ],
+      "pc": true,
+      "pcTarget": {
+       "tab": "pc",
+       "module": "erp-sign"
+      }
+     },
+     {
+      "t": "ERP 系统对接（奇门接口）",
+      "d": [
+       "由你的 ERP 实施发起奇门申请，配置仓库编码 / 快递映射，把货品同步到菜鸟仓，再在菜鸟系统维护包装方案、预约入库单。"
+      ],
+      "pc": true,
+      "pcTarget": {
+       "tab": "pc",
+       "module": "erp-link"
+      }
+     }
+    ]
+   },
+   {
     "id": "s3",
     "stage": "g2",
     "ic": "📦",
@@ -2042,6 +2341,7 @@ const GUIDE = {
    {
     "id": "sst",
     "stage": "g4",
+    "branch": "free",
     "ic": "🏬",
     "title": "店铺授权（PC）",
     "desc": "小程序可复制授权地址，实际授权操作需在电脑端 CNBP 完成。",
@@ -2081,6 +2381,7 @@ const GUIDE = {
    {
     "id": "s4",
     "stage": "g4",
+    "branch": "free",
     "ic": "🔗",
     "title": "商货品绑定",
     "desc": "把线上商品与云仓货品关联，分三种处理方式。",
@@ -2126,6 +2427,7 @@ const GUIDE = {
     "id": "pddm",
     "imgKey": "pdd",
     "stage": "g4",
+    "branch": "pdd",
     "ic": "🧩",
     "title": "拼多多店铺 · 管易云对接",
     "desc": "拼多多同样不支持 CNBP 直接对接，需单独购买管易云 ERP；管易云为 PC 网页系统，建品 / 绑货 / 授权 / 铺货等完整操作请在电脑端进行，流程与 PC 版一致。",
@@ -2134,6 +2436,30 @@ const GUIDE = {
     "note2": "订单流程：店铺拉单到管易云 → 管易云审核 → 推送到 CNBP → CNBP 审核 → 仓库发货 → 出库回传。",
     "links": PDD_LINKS,
     "steps": PDD_STEPS
+   },
+   {
+    "id": "pddm-manual",
+    "stage": "g4",
+    "branch": "pdd",
+    "ic": "✍️",
+    "title": "拼多多 · 人工建单发货",
+    "desc": "不买管易云 ERP 时的替代方案：拼多多订单无法自动拉取，需在菜鸟系统里手工创建发货单，逐单录入后推单到仓。",
+    "note": "适合单量很少的过渡期；单量上来后建议改用「管易云对接」自动拉单。人工建单入口见下方「手动创建发货单」。",
+    "noteWarn": 1,
+    "steps": [
+     {
+      "t": "手动创建发货单",
+      "d": [
+       "在订单页新建发货单，手动填写拼多多买家收货信息、选择仓库与货品数量，提交推单到仓。"
+      ],
+      "rel": [
+       {
+        "to": "smo",
+        "label": "手动创建发货单（图文步骤）"
+       }
+      ]
+     }
+    ]
    },
    {
     "id": "s6",
@@ -2635,6 +2961,18 @@ const FAQ = [
 ];
 /* ================= 截图资源（模块 id -> 图片路径，按源文档图序号排列） ================= */
 const IMAGES={
+ "erp-sign": [
+  "assets/erp1_1.jpg",
+  "assets/erp1_2.jpg",
+  "assets/erp1_3.jpg",
+  "assets/erp1_4.jpg",
+  "assets/erp1_5.jpg",
+  "assets/erp1_6.jpg",
+  "assets/erp1_7.jpg"
+ ],
+ "erp-link": [
+  "assets/erp2_1.jpg"
+ ],
  "m1": [
   "assets/m1_1.jpg",
   "assets/m1_2.jpg",
@@ -3025,7 +3363,7 @@ function moduleHTML(m,tab){
   const links=(m.links&&m.links.length)?`<div class="mod-links"><span class="ml-lbl">📎 相关资料：</span>${m.links.map(renderLink).join('')}</div>`:'';
   const login=m.login?`<div class="mod-login">${linkChip(m.login)}</div>`:'';
   return `<section class="mod" id="${m.id}">
-    <div class="mod-h"><div class="mod-ic">${m.ic}</div><div><div class="kicker">${stg(m.stage).name}</div><h2>${m.title}</h2></div></div>
+    <div class="mod-h"><div class="mod-ic">${m.ic}</div><div><div class="kicker">${stg(m.stage).name}</div><h2>${m.title}${branchBadge(m)}</h2></div></div>
     <div class="mod-desc">${esc(m.desc)}</div>
     ${login}
     ${links}
@@ -3048,7 +3386,8 @@ function tocHTML(mods,stages){
     h+=`<div class="grp-h"><span class="dot"></span>${sg.ic} ${sg.name}</div>`;
     inS.forEach(m=>{
       const hasPc=m.steps.some(x=>x.pc);
-      h+=`<a href="#${m.id}" data-toc="${m.id}">${m.title}${hasPc?' <span class="pc-tag">↗PC</span>':''}</a>`;
+      const b=BRANCHES[m.branch];
+      h+=`<a href="#${m.id}" data-toc="${m.id}">${b?`<span class="tdot ${b.cls}"></span>`:''}${m.title}${hasPc?' <span class="pc-tag">↗PC</span>':''}</a>`;
     });
   });
   return h;
@@ -3059,10 +3398,12 @@ function renderFlow(tab){
   const callout = tab==='pc'?'':
     `<div class="tip warn" style="margin:16px 30px 0"><span class="e">📌</span><div>小程序可完成大部分日常操作；<b>打印条码、批量上传、完整账单开票</b>等仍需去 PC。看到橙色「需在 PC 端完成」标签，点一下即跳到 PC 版对应模块。</div></div>`;
   let content='';
+  if(tab==='mp') content+=branchCardHTML('mp');
   stages.forEach(sg=>{
     const inS=mods.filter(m=>m.stage===sg.id);
     if(!inS.length) return;
     content+=`<div class="stage-head" id="${sg.id}"><div class="sh-ic">${sg.ic}</div><div><div class="sh-t">${sg.name}</div><div class="sh-s">${sg.sub}</div></div></div>`;
+    if(tab==='pc'&&sg.id==='st2') content+=branchCardHTML('pc');
     content+=inS.map(m=>moduleHTML(m,tab)).join('');
   });
   $('#panel-'+tab).innerHTML = stagebarHTML(stages, tab==='mp'?'按分组浏览 ›':'第一次入仓动线 ›')+callout+
