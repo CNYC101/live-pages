@@ -1,0 +1,11 @@
+# 小程序(mp)与拼多多QA(pddqa)截图仅存于 OSS 图床，不入库（历史约定，避免仓库膨胀）。
+# 本地保留一份用于重新生成缩略图；如需从 OSS 拉回，用 index.html 里 IMAGES 的路径 + IMG_BASE 下载。
+assets/mp/
+assets/pddqa/
+assets/t/mp/
+assets/t/pddqa/
+# 维护用临时文件，不入库
+.oss_creds.txt
+.venv-oss/
+upload_thumbs.py
+_localtest.html

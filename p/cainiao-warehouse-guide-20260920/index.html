@@ -113,7 +113,8 @@
   .th:hover{border-color:var(--brand);box-shadow:var(--shadow-h);transform:translateY(-2px)}
   .th .sk{position:absolute;inset:0;z-index:0;display:grid;place-items:center;font-size:12px;color:#a4b0c4;background:linear-gradient(100deg,#eef2f8 30%,#f7faff 50%,#eef2f8 70%);background-size:200% 100%;animation:shimmer 1.3s infinite linear}
   @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
-  .th img{position:relative;z-index:1;width:100%;height:100%;object-fit:contain;display:block;background:transparent}
+  .th img{position:relative;z-index:1;width:100%;height:100%;object-fit:contain;display:block;background:transparent;opacity:0;transition:opacity .3s ease}
+  .th.ld img{opacity:1}
   .th.ld .sk{display:none}
   .th .n{position:absolute;left:8px;top:8px;z-index:2;background:rgba(29,33,41,.72);color:#fff;font-size:11px;font-weight:700;border-radius:6px;padding:1px 7px}
   .th .mag{position:absolute;right:8px;bottom:8px;z-index:2;background:rgba(30,111,255,.9);color:#fff;font-size:11px;font-weight:600;border-radius:20px;padding:2px 9px;opacity:0;transition:.15s}
@@ -3167,7 +3168,10 @@ const $=s=>document.querySelector(s);
 /* 图片基址：留空=相对路径(GitHub Pages)；填国内可访问的 OSS/CDN 前缀则整站图片走该域名，
    例如 https://your-bucket.oss-cn-hangzhou.aliyuncs.com/cainiao-guide （末尾不要带斜杠） */
 const IMG_BASE='https://cnyc-guide-assets-0923.oss-cn-beijing.aliyuncs.com';
-function iu(p){return IMG_BASE&&!/^https?:/i.test(p)?IMG_BASE.replace(/\/+$/,'')+'/'+p.replace(/^\/+/,''):p;}
+/* 缩略图缓存版本号：OSS 对象带 1 年 Cache-Control，重新生成缩略图后仅改内容 URL 不变会被旧缓存命中。
+   给 assets/t/ 缩略图统一追加 ?v=，换图时改这个值即可强制刷新；原图(点击放大)与下载文件不加、保持长期缓存。 */
+const IMG_VER='20261016a';
+function iu(p){let u=(IMG_BASE&&!/^https?:/i.test(p))?IMG_BASE.replace(/\/+$/,'')+'/'+p.replace(/^\/+/,''):p;if(/^assets\/t\//i.test(p)&&!/[?&]v=/.test(u))u+=(u.indexOf('?')<0?'?':'&')+'v='+IMG_VER;return u;}
 function esc(t){return (t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function stg(id){return STAGES.find(s=>s.id===id)||MP_STAGES.find(s=>s.id===id)||{name:'',sub:'',ic:'▫️'};}
 
@@ -3319,7 +3323,7 @@ function switchTab(name){
   curTab=name; renderTabs();
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   $('#panel-'+name).classList.add('active');
-  markLoaded(); setTimeout(markLoaded,400);
+  markLoaded(); prioritizeImgs(); setTimeout(()=>{markLoaded();prioritizeImgs();},400);
   window.scrollTo({top:0,behavior:'smooth'});
 }
 function jumpStage(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
@@ -3346,8 +3350,23 @@ function spy(){
 }
 let ticking=false;
 function markLoaded(){document.querySelectorAll('.th:not(.ld)').forEach(t=>{const i=t.querySelector('img');if(i&&i.complete&&i.naturalWidth>0)t.classList.add('ld');});}
-window.addEventListener('load',markLoaded);
-window.addEventListener('scroll',()=>{if(!ticking){requestAnimationFrame(()=>{spy();markLoaded();ticking=false;});ticking=true;}});
+/* 首屏体验：把当前面板中靠近视口(1.6 屏内)的截图设为 eager+高优先级并强制立即拉取，
+   远处的保持原生 lazy。避免"打开页面图片都没加载出来"，又不牺牲首屏速度。 */
+function prioritizeImgs(){
+  const panel=document.querySelector('.panel.active')||document;
+  const imgs=[...panel.querySelectorAll('.th img')];
+  const lookahead=innerHeight*2.5;
+  imgs.forEach((img,idx)=>{
+    const r=img.getBoundingClientRect();
+    const near = r.bottom>-200 && r.top<lookahead;
+    if(!(near || idx<10)) return;             // 前 10 张 + 视口下方 2.5 屏内的都提前加载
+    if(img.loading!=='eager'){img.loading='eager';img.setAttribute('fetchpriority', idx<10?'high':'auto');}
+  });
+}
+let priTicking=false;
+function schedulePrioritize(){if(priTicking)return;priTicking=true;requestAnimationFrame(()=>{prioritizeImgs();priTicking=false;});}
+window.addEventListener('load',()=>{markLoaded();prioritizeImgs();});
+window.addEventListener('scroll',()=>{if(!ticking){requestAnimationFrame(()=>{spy();markLoaded();schedulePrioritize();ticking=false;});ticking=true;}});
 
 /* lightbox */
 let lbGroup=[],lbIdx=0;
@@ -3376,6 +3395,7 @@ document.addEventListener('keydown',e=>{
 
 /* init */
 renderTabs(); renderFlow('pc'); renderFlow('mp'); renderFAQ();
+prioritizeImgs(); setTimeout(prioritizeImgs,200);
 </script>
 </body>
 </html>
