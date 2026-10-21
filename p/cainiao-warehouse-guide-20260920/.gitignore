@@ -9,3 +9,7 @@ assets/t/pddqa/
 .venv-oss/
 upload_thumbs.py
 _localtest.html
+
+# 配音演示视频仅存于 OSS，不入库（避免仓库膨胀 +43MB）
+assets/video/
+_range_server.py

@@ -141,6 +141,16 @@
   .login-hint{display:inline-flex;align-items:center;gap:5px;font-size:14.5px;font-weight:800;color:#e02020;line-height:1.3}
   .login-hint .hand{font-size:24px;line-height:1;display:inline-block;animation:point-left 1s ease-in-out infinite}
   @keyframes point-left{0%,100%{transform:translateX(0)}50%{transform:translateX(-7px)}}
+  /* 模块配音演示视频（小程序版，置于模块最前面；竖屏手机录屏 1320×2868） */
+  .mod-video{margin:14px 0 12px;padding:12px;border:1px solid #cfe0ff;border-radius:14px;background:#F3F8FF}
+  .mod-video .mv-h{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:var(--brand);margin-bottom:10px}
+  .mod-video .mv-play{width:24px;height:24px;flex:0 0 24px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;font-size:11px}
+  .mod-video .mv-dur{margin-left:auto;flex:0 0 auto;font-size:12px;font-weight:600;color:var(--ink-3);background:#fff;border:1px solid var(--line);border-radius:10px;padding:2px 8px}
+  .mod-video .mv-el{display:block;margin:0 auto;width:auto;height:auto;max-width:360px;max-height:min(80vh,700px);aspect-ratio:1320/2868;background:#0d1420;border:1px solid var(--line);border-radius:12px}
+  .mod-video .mv-b{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px}
+  .mod-video .mv-d{font-size:12.5px;color:var(--ink-3);line-height:1.5}
+  .mod-video .mv-dl{margin-left:auto;flex:0 0 auto;font-size:12.5px;color:var(--brand);background:#fff;border:1px solid #cfe0ff;padding:5px 12px;border-radius:10px;white-space:nowrap;text-decoration:none}
+  .mod-video .mv-dl:hover{background:var(--brand);color:#fff}
   /* 功能对照表 */
   .mod-table{margin:10px 0 4px;overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:#fff}
   .mod-table table{border-collapse:collapse;width:100%;font-size:14px;color:var(--ink)}
@@ -278,6 +288,23 @@ const BRANCHES={
   pdd:{cls:'pdd',label:'③ 有拼多多店铺',color:'#FF7A45'},
 };
 function branchBadge(m){const b=BRANCHES[m.branch];return b?`<span class="branch-badge branch-${b.cls}">${b.label}</span>`:'';}
+
+/* ================= 小程序配音演示视频（放在所属模块最前面）================= */
+/* key = 小程序模块 id；v 视频相对路径 | p 封面 | dur 秒 | t 标题 | d 一句话看点 */
+const MP_VIDEOS={
+  s1:{v:'assets/video/s1-login-register.mp4',p:'assets/video/poster/s1-login.jpg',dur:11,t:'登录与注册 · 操作演示',d:'11 秒看完：进入「菜鸟云仓」小程序 → 微信快捷登录 / 手机号验证码'},
+  s3:{v:'assets/video/s3-new-item.mp4',p:'assets/video/poster/s3-new-item.jpg',dur:41,t:'新增货品 · 操作演示',d:'41 秒看完：识图 / 扫码 / 手填建品 → 选包装方案'},
+  scb:{v:'assets/video/scb-combo-item.mp4',p:'assets/video/poster/scb-combo.jpg',dur:21,t:'组合货品 · 操作演示',d:'21 秒看完：新增类型选「组合货品」→ 添加子品 → 确认'},
+  s5:{v:'assets/video/s5-inbound-order.mp4',p:'assets/video/poster/s5-inbound.jpg',dur:27,t:'新建入库单 · 操作演示',d:'27 秒看完：选品 → 确认数量 → 提交寄仓'},
+  s4:{v:'assets/video/s4-bind-item.mp4',p:'assets/video/poster/s4-bind.jpg',dur:10,t:'商货品绑定 · 操作演示',d:'10 秒看完：待处理商品 → 关联仓库货品 → 确认关联'},
+};
+function videoHTML(m){
+  const v=MP_VIDEOS[m.id];if(!v)return '';
+  const full=iu(v.v);
+  return `<div class="mod-video"><div class="mv-h"><span class="mv-play">▶</span><span class="mv-t">${esc(v.t)}</span><span class="mv-dur">⏱ ${v.dur} 秒</span></div>
+    <video class="mv-el" src="${full}" poster="${iu(v.p)}" controls preload="none" playsinline webkit-playsinline x5-playsinline></video>
+    <div class="mv-b"><span class="mv-d">${esc(v.d)}</span><a class="mv-dl" href="${full}" download>⬇️ 下载视频</a></div></div>`;
+}
 /* 决策卡：PC 版放「ERP 对接」阶段顶部；小程序版放最前面，三选一引导 */
 function branchCardHTML(tab){
   const T = tab==='mp'
@@ -3171,7 +3198,9 @@ const IMG_BASE='https://cnyc-guide-assets-0923.oss-cn-beijing.aliyuncs.com';
 /* 缩略图缓存版本号：OSS 对象带 1 年 Cache-Control，重新生成缩略图后仅改内容 URL 不变会被旧缓存命中。
    给 assets/t/ 缩略图统一追加 ?v=，换图时改这个值即可强制刷新；原图(点击放大)与下载文件不加、保持长期缓存。 */
 const IMG_VER='20261016a';
-function iu(p){let u=(IMG_BASE&&!/^https?:/i.test(p))?IMG_BASE.replace(/\/+$/,'')+'/'+p.replace(/^\/+/,''):p;if(/^assets\/t\//i.test(p)&&!/[?&]v=/.test(u))u+=(u.indexOf('?')<0?'?':'&')+'v='+IMG_VER;return u;}
+/* 配音演示视频缓存版本号：视频/封面与原图共用 OSS 桶（assets/video/ 下），同享 1 年强缓存，换视频改这里强制刷新 */
+const VIDEO_VER='20261021a';
+function iu(p){let u=(IMG_BASE&&!/^https?:/i.test(p))?IMG_BASE.replace(/\/+$/,'')+'/'+p.replace(/^\/+/,''):p;if(/^assets\/t\//i.test(p)&&!/[?&]v=/.test(u))u+=(u.indexOf('?')<0?'?':'&')+'v='+IMG_VER;else if(/^assets\/video\//i.test(p)&&!/[?&]v=/.test(u))u+=(u.indexOf('?')<0?'?':'&')+'v='+VIDEO_VER;return u;}
 function esc(t){return (t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function stg(id){return STAGES.find(s=>s.id===id)||MP_STAGES.find(s=>s.id===id)||{name:'',sub:'',ic:'▫️'};}
 
@@ -3241,6 +3270,7 @@ function moduleHTML(m,tab){
   return `<section class="mod" id="${m.id}">
     <div class="mod-h"><div class="mod-ic">${m.ic}</div><div><div class="kicker">${stg(m.stage).name}</div><h2>${m.title}${branchBadge(m)}</h2></div></div>
     <div class="mod-desc">${esc(m.desc)}</div>
+    ${videoHTML(m)}
     ${login}
     ${links}
     ${note}
