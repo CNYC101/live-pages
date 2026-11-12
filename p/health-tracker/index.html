@@ -33,22 +33,27 @@ body{
   background:var(--bg);color:var(--ink);
   overscroll-behavior-y:none;
 }
-#app{max-width:520px;margin:0 auto;height:100vh;display:flex;flex-direction:column;position:relative;background:var(--bg);}
+#app{max-width:520px;margin:0 auto;height:100vh;height:100dvh;display:flex;flex-direction:column;position:relative;background:var(--bg);overflow:hidden;}
 /* 顶部标题条 */
 .topbar{
+  flex-shrink:0;
   padding:calc(env(safe-area-inset-top,0px) + 14px) 18px 12px;
   background:linear-gradient(135deg,#0EA5A4 0%,#2E9BE0 100%);
   color:#fff;display:flex;align-items:center;justify-content:space-between;
   border-radius:0 0 20px 20px;box-shadow:var(--shadow);
 }
 .topbar .tb-title{font-size:18px;font-weight:800;letter-spacing:.5px;}
-.topbar .tb-user{font-size:12px;opacity:.9;display:flex;align-items:center;gap:6px;max-width:52%;justify-content:flex-end;}
+.topbar .tb-user{font-size:12px;opacity:.9;display:flex;align-items:center;gap:6px;justify-content:flex-end;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:120px;}
 .topbar .tb-user .dot{width:7px;height:7px;border-radius:50%;background:#fff;opacity:.85;}
+.topbar .tb-right{display:flex;align-items:center;gap:10px;max-width:60%;justify-content:flex-end;}
+.tb-refresh{background:rgba(255,255,255,.22);border:0;color:#fff;width:30px;height:30px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.tb-refresh:active{background:rgba(255,255,255,.35);}
+.tb-refresh.spin{transition:transform .6s ease;transform:rotate(360deg);}
 /* 内容滚动区 */
-.scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 14px calc(84px + var(--safe-b));}
+.scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 14px 20px;}
 .scroll::-webkit-scrollbar{display:none;}
 /* 底部 Tab */
-.tabbar{position:absolute;left:0;right:0;bottom:0;padding-bottom:var(--safe-b);background:#fff;border-top:1px solid var(--line);}
+.tabbar{position:relative;flex-shrink:0;background:#fff;border-top:1px solid var(--line);padding-bottom:var(--safe-b);}
 .tb-row{display:flex;}
 .tabbar button{flex:1;border:0;background:none;padding:8px 0 6px;display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--sub);font-size:11px;cursor:pointer;transition:transform .1s;}
 .tabbar button .ic{font-size:20px;line-height:1;}
@@ -141,10 +146,13 @@ textarea.bk{height:120px;font-size:12px;font-family:ui-monospace,Menlo,monospace
 <div id="app">
   <div class="topbar">
     <div class="tb-title" id="tbTitle">健康登记</div>
-    <div class="tb-user" id="tbUser"></div>
+    <div class="tb-right">
+      <div class="tb-user" id="tbUser"></div>
+      <button class="tb-refresh" id="reloadBtn" title="刷新 / 检查更新" onclick="checkUpdate(true)">&#10227;</button>
+    </div>
   </div>
   <div class="scroll" id="view"></div>
-  <nav class="tabbar">
+  <nav class="tabbar" id="tabbar">
     <div class="tb-row">
       <button class="on" data-tab="home"><span class="ic">🏠</span>首页</button>
       <button data-tab="weight"><span class="ic">⚖️</span>体重</button>
@@ -162,6 +170,7 @@ textarea.bk{height:120px;font-size:12px;font-family:ui-monospace,Menlo,monospace
 "use strict";
 /* ========================= 数据层 ========================= */
 const KEY='healthLog_v1';
+const APP_VERSION='v1.1';   // 每次发布新版本时改这里（改了“检查更新”才会提示）
 const METRICS=[
   {k:'waist',n:'腰围'},{k:'chest',n:'胸围'},{k:'hip',n:'臀围'},
   {k:'thigh',n:'大腿围'},{k:'calf',n:'小腿围'},{k:'arm',n:'手臂围'}
@@ -600,8 +609,13 @@ function renderMe(){
       <button class="btn btn-ghost" onclick="importSheet()">导入恢复</button>
     </div>
   </div>
+  <div class="card"><div class="sec-title">更新 / 刷新</div>
+    <div class="muted" style="margin-bottom:12px;line-height:1.6">当页面有新版本时，点这里检查更新并刷新，无需重新添加到主屏幕。数据保存在本机，刷新不会丢失。</div>
+    <button class="btn btn-primary" onclick="checkUpdate(true)">🔄 检查更新并刷新 <span style="font-size:12px;opacity:.85;font-weight:600">${APP_VERSION}</span></button>
+    <button class="btn btn-ghost" style="margin-top:10px" onclick="hardReload()">强制刷新（绕过缓存）</button>
+  </div>
   <div class="card"><div class="sec-title">关于</div>
-    <div class="muted" style="line-height:1.7">· BMI = 体重(kg) ÷ 身高(m)²<br>· BMI 判定采用中国成人标准：偏瘦&lt;18.5 / 正常18.5–24 / 超重24–28 / 肥胖≥28<br>· 所有记录均可点击编辑或删除</div>
+    <div class="muted" style="line-height:1.7">· 当前版本 ${APP_VERSION}<br>· BMI = 体重(kg) ÷ 身高(m)²<br>· BMI 判定采用中国成人标准：偏瘦&lt;18.5 / 正常18.5–24 / 超重24–28 / 肥胖≥28<br>· 所有记录均可点击编辑或删除</div>
   </div>`;
 }
 
@@ -720,6 +734,91 @@ function noUser(){
   view.innerHTML=`<div class="empty" style="margin-top:40px"><div class="em-ic">📭</div><div>还没有档案</div>
     <button class="btn btn-primary" style="max-width:220px;margin:16px auto 0" onclick="openNewUser()">＋ 新建用户</button></div>`;
 }
+
+/* ========================= 版本刷新 / 检查更新 ========================= */
+let checking=false;
+async function fetchRemoteVersion(){
+  try{
+    const res=await fetch(location.pathname+'?_v='+Date.now(),{cache:'no-store'});
+    if(!res.ok) return '';
+    const html=await res.text();
+    const m=html.match(/APP_VERSION\s*=\s*['"]([^'"]+)['"]/);
+    return m?m[1]:'';
+  }catch(e){ return ''; }
+}
+function spinReload(){const b=$('#reloadBtn');if(!b)return;b.classList.add('spin');setTimeout(()=>b.classList.remove('spin'),650);}
+async function checkUpdate(fromButton){
+  if(checking) return; checking=true; spinReload();
+  const remote=await fetchRemoteVersion(); checking=false;
+  if(!remote){
+    // 取不到（离线/跨域）→ 退化为直接重新加载
+    updateConfirm('重新加载页面','数据保存在本机，重新加载不会丢失。若加载后界面没变，请用「强制更新」。','重新加载',doReload);
+    return;
+  }
+  if(remote!==APP_VERSION){
+    updateConfirm('发现新版本 '+remote,'当前 '+APP_VERSION+'，最新 '+remote+'。立即更新即可使用新版，你的数据不会丢失。','立即更新',doReload);
+  }else{
+    toast('已是最新版本 '+APP_VERSION);
+    if(fromButton) setTimeout(()=>updateConfirm('已是最新版本','当前已是 '+APP_VERSION+'。如需绕过缓存重新拉取，可强制刷新一次。','强制刷新',hardReload),400);
+  }
+}
+function updateConfirm(title,text,okText,onOk){
+  window._uc=onOk;
+  openSheet(`<div class="sh-title">${esc(title)}</div>
+    <div class="muted" style="text-align:center;margin-bottom:16px;line-height:1.6">${esc(text)}</div>
+    <div style="display:flex;gap:10px"><button class="btn btn-ghost" onclick="closeSheet()">取消</button>
+    <button class="btn btn-primary" onclick="closeSheet();window._uc&&window._uc()">${esc(okText)}</button></div>`);
+}
+/* 刷新：附唯一时间参数，绕过 iOS 主屏缓存，强制从网络取最新 HTML */
+function doReload(){
+  try{save();}catch(e){}
+  const u=new URL(location.href);
+  u.searchParams.set('_r',Date.now());
+  u.searchParams.set('_v',APP_VERSION);
+  location.replace(u.toString());
+}
+function hardReload(){
+  try{save();}catch(e){}
+  const u=new URL(location.href);
+  u.searchParams.set('_r',Date.now()+Math.floor(Math.random()*9999));
+  u.searchParams.set('_v',APP_VERSION);
+  u.searchParams.set('fresh','1');
+  location.href=u.toString();
+}
+/* 冷启动静默检查：发现新版弹顶部提示条，不打断操作 */
+(async function autoCheckOnOpen(){
+  const last=sessionStorage.getItem('ht_checked');
+  sessionStorage.setItem('ht_checked','1');
+  if(last) return;
+  await new Promise(r=>setTimeout(r,1000));
+  const remote=await fetchRemoteVersion();
+  if(!remote||remote===APP_VERSION) return;
+  showUpdateBar(remote);
+})();
+function showUpdateBar(remote){
+  if(document.getElementById('updBar')) return;
+  const bar=document.createElement('div');
+  bar.id='updBar';
+  bar.innerHTML=`<span>🎉 有新版本 ${esc(remote)}</span><button id="updGo">立即更新</button><button id="updX">✕</button>`;
+  Object.assign(bar.style,{position:'absolute',left:'12px',right:'12px',top:'calc(env(safe-area-inset-top,0px) + 62px)',zIndex:'300',display:'flex',alignItems:'center',gap:'8px',padding:'10px 12px',borderRadius:'14px',background:'linear-gradient(135deg,#0EA5A4,#2E9BE0)',color:'#fff',fontSize:'13px',fontWeight:'700',boxShadow:'0 8px 22px rgba(14,165,164,.35)'});
+  bar.querySelector('#updGo').style.cssText='margin-left:auto;background:#fff;color:#0B8A89;border-radius:10px;padding:6px 12px;font-size:12px;font-weight:800;border:0;cursor:pointer;';
+  bar.querySelector('#updX').style.cssText='color:#fff;opacity:.8;font-size:15px;padding:0 2px;background:none;border:0;cursor:pointer;';
+  $('#app').appendChild(bar);
+  bar.querySelector('#updGo').onclick=doReload;
+  bar.querySelector('#updX').onclick=()=>bar.remove();
+}
+
+/* ========================= 离线缓存（Service Worker） ========================= */
+/* 注册真实 sw.js（GitHub Pages 可正常提供子资源）：网络优先取最新，离线回退缓存，
+   让“添加到主屏幕”打开时自动拿到新版本，并支持无网打开。注册失败则静默降级。 */
+(function registerSW(){
+  if(!('serviceWorker' in navigator)) return;
+  if(location.protocol!=='https:' && location.hostname!=='localhost') return;
+  window.addEventListener('load',()=>{
+    const base=location.pathname.replace(/[^/]*$/,''); // 目录
+    navigator.serviceWorker.register(base+'sw.js?_sw='+APP_VERSION).catch(()=>{});
+  });
+})();
 
 /* ========================= 事件绑定 ========================= */
 document.querySelectorAll('#tabbar button').forEach(b=>b.addEventListener('click',()=>{
