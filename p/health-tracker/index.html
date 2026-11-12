@@ -170,7 +170,7 @@ textarea.bk{height:120px;font-size:12px;font-family:ui-monospace,Menlo,monospace
 "use strict";
 /* ========================= 数据层 ========================= */
 const KEY='healthLog_v1';
-const APP_VERSION='v1.1';   // 每次发布新版本时改这里（改了“检查更新”才会提示）
+const APP_VERSION='v1.2';   // 每次发布新版本时改这里（改了“检查更新”才会提示）
 const METRICS=[
   {k:'waist',n:'腰围'},{k:'chest',n:'胸围'},{k:'hip',n:'臀围'},
   {k:'thigh',n:'大腿围'},{k:'calf',n:'小腿围'},{k:'arm',n:'手臂围'}
@@ -191,6 +191,10 @@ function activeUser(){ return DB.users.find(u=>u.id===DB.activeId)||null; }
 
 /* BMI */
 function bmi(wKg,hCm){ if(!wKg||!hCm) return null; const m=hCm/100; return wKg/(m*m); }
+/* 斤 ↔ kg 换算：家秤按斤，输入用斤，存储/显示统一用 kg（1 kg = 2 斤） */
+function kgToJin(kg){ return (kg==null||kg==='')?'':(kg*2); }
+function jinToKg(jin){ return (jin===''||jin==null||isNaN(+jin))?'':(+jin/2); }
+function previewJin(inputId,prevId){ const v=+document.getElementById(inputId).value; const el=document.getElementById(prevId); if(el) el.innerHTML=(v>0)?('≈ <b>'+(v/2).toFixed(1)+' kg</b>'):''; }
 function bmiClass(b){
   if(b==null) return null;
   if(b<18.5) return {label:'偏瘦',color:'#2E9BE0',bg:'#E7F3FC'};
@@ -446,8 +450,9 @@ function openWeightForm(id){
   const u=activeUser(); if(!u)return;
   const r=id?u.weightRecords.find(x=>x.id===id):null;
   openSheet(`<div class="sh-title">${r?'编辑体重记录':'添加体重记录'}<span class="sh-close" onclick="closeSheet()">✕</span></div>
-    <div class="field"><label>体重 (kg)<span class="lb-req">*</span></label>
-      <input id="f_w" type="number" inputmode="decimal" step="0.1" placeholder="如 62.5" value="${r&&r.w!=null?r.w:''}"></div>
+    <div class="field"><label>体重 (斤)<span class="lb-req">*</span></label>
+      <input id="f_w" type="number" inputmode="decimal" step="0.1" placeholder="如 125" value="${r&&r.w!=null?kgToJin(r.w):''}" oninput="previewJin('f_w','f_wPrev')">
+      <div class="ihint" id="f_wPrev">${r&&r.w!=null?('≈ <b>'+(+r.w).toFixed(1)+' kg</b>'):''}</div></div>
     <div class="field"><label>体脂率 (%) · 选填</label>
       <input id="f_bf" type="number" inputmode="decimal" step="0.1" placeholder="如 24.5" value="${r&&r.bf!=null?r.bf:''}"></div>
     <div class="field"><label>记录时间</label>
@@ -463,8 +468,9 @@ function openWeightForm(id){
 }
 function saveWeight(id){
   const u=activeUser();
-  const w=$('#f_w').value.trim();
-  if(w===''){toast('请填写体重');return;}
+  const jin=$('#f_w').value.trim();
+  if(jin===''){toast('请填写体重');return;}
+  const w=jinToKg(jin); // 斤 → kg 存储
   const bf=$('#f_bf').value.trim();
   const t=new Date($('#f_t').value||Date.now()).getTime();
   const note=$('#f_note').value.trim();
@@ -479,11 +485,12 @@ function delWeight(id){
 function openGoal(){
   const u=activeUser();
   openSheet(`<div class="sh-title">目标体重<span class="sh-close" onclick="closeSheet()">✕</span></div>
-    <div class="field"><label>目标体重 (kg)</label><input id="g_tw" type="number" inputmode="decimal" step="0.1" placeholder="如 58" value="${u.targetWeight||''}"></div>
-    <div class="ihint">设定后可在体重模块看到「距离目标」进度条。</div>
+    <div class="field"><label>目标体重 (斤)</label><input id="g_tw" type="number" inputmode="decimal" step="0.1" placeholder="如 116" value="${u.targetWeight?kgToJin(u.targetWeight):''}" oninput="previewJin('g_tw','g_twPrev')">
+      <div class="ihint" id="g_twPrev">${u.targetWeight?('≈ <b>'+(+u.targetWeight).toFixed(1)+' kg</b>'):''}</div></div>
+    <div class="ihint">设定后可在体重模块看到「距离目标」进度条。存的是 kg，显示也是 kg。</div>
     <button class="btn btn-primary" style="margin-top:6px" onclick="saveGoal()">保存</button>`);
 }
-function saveGoal(){const u=activeUser();const v=$('#g_tw').value.trim();u.targetWeight=v===''?null:+v;save();closeSheet();render();toast('已设置目标');}
+function saveGoal(){const u=activeUser();const v=$('#g_tw').value.trim();u.targetWeight=v===''?null:+jinToKg(v);save();closeSheet();render();toast('已设置目标');}
 
 /* ========================= 体围模块 ========================= */
 function renderGirth(){
@@ -625,7 +632,7 @@ function openNewUser(){
     <div class="field"><label>昵称<span class="lb-req">*</span></label><input id="n_name" type="text" maxlength="12" placeholder="如 我自己 / 爸爸"></div>
     <div class="grid2">
       <div class="field"><label>身高 (cm)<span class="lb-req">*</span></label><input id="n_h" type="number" inputmode="decimal" step="0.1" placeholder="如 170"></div>
-      <div class="field"><label>初始体重 (kg)<span class="lb-req">*</span></label><input id="n_w" type="number" inputmode="decimal" step="0.1" placeholder="如 65"></div>
+      <div class="field"><label>初始体重 (斤)<span class="lb-req">*</span></label><input id="n_w" type="number" inputmode="decimal" step="0.1" placeholder="如 130"></div>
     </div>
     <div id="n_bmiPrev" class="ihint"></div>
     <button class="btn btn-primary" style="margin-top:10px" onclick="createUser()">创建并开始记录</button>`);
@@ -633,14 +640,14 @@ function openNewUser(){
   setTimeout(()=>$('#n_name').focus(),300);
 }
 function previewBMI(){
-  const h=+$('#n_h').value,w=+$('#n_w').value;const b=bmi(w,h);const bc=bmiClass(b);
-  $('#n_bmiPrev').innerHTML=b!=null?`初始 BMI ≈ <b style="color:${bc.color}">${b.toFixed(1)}（${bc.label}）</b>`:'';
+  const h=+$('#n_h').value,wJin=+$('#n_w').value,wKg=wJin/2;const b=bmi(wKg,h);const bc=bmiClass(b);
+  $('#n_bmiPrev').innerHTML=b!=null?`初始体重 ${wJin} 斤 ≈ <b>${wKg.toFixed(1)} kg</b> · BMI ≈ <b style="color:${bc.color}">${b.toFixed(1)}（${bc.label}）</b>`:'';
 }
 function createUser(){
-  const name=$('#n_name').value.trim(),h=+$('#n_h').value,w=+$('#n_w').value;
+  const name=$('#n_name').value.trim(),h=+$('#n_h').value,wJin=+$('#n_w').value,w=jinToKg(wJin);
   if(!name){toast('请填写昵称');return;}
   if(!h){toast('请填写身高');return;}
-  if(!w){toast('请填写初始体重');return;}
+  if(!wJin){toast('请填写初始体重');return;}
   const u={id:uid(),name,height:h,targetWeight:null,girthTargets:{},
     weightRecords:[{id:Date.now(),w,bf:null,t:Date.now(),note:'初始体重'}],
     girthRecords:[],createdAt:Date.now()};
@@ -652,7 +659,7 @@ function openEditUser(id){
     <div class="field"><label>昵称</label><input id="e_name" type="text" maxlength="12" value="${esc(u.name)}"></div>
     <div class="grid2">
       <div class="field"><label>身高 (cm)</label><input id="e_h" type="number" inputmode="decimal" step="0.1" value="${u.height||''}"></div>
-      <div class="field"><label>目标体重 (kg)</label><input id="e_tw" type="number" inputmode="decimal" step="0.1" value="${u.targetWeight||''}"></div>
+      <div class="field"><label>目标体重 (斤)</label><input id="e_tw" type="number" inputmode="decimal" step="0.1" value="${u.targetWeight?kgToJin(u.targetWeight):''}"></div>
     </div>
     <button class="btn btn-primary" style="margin-top:8px" onclick="saveEditUser('${u.id}')">保存</button>`);
 }
@@ -660,7 +667,7 @@ function saveEditUser(id){
   const u=DB.users.find(x=>x.id===id);
   u.name=$('#e_name').value.trim()||u.name;
   u.height=+$('#e_h').value||u.height;
-  const tv=$('#e_tw').value.trim();u.targetWeight=tv===''?null:+tv;
+  const tv=$('#e_tw').value.trim();u.targetWeight=tv===''?null:+jinToKg(tv);
   save();closeSheet();render();toast('已保存');
 }
 function delUser(id){
