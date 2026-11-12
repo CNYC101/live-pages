@@ -446,7 +446,8 @@ function todayStr(ts){ const d=new Date(ts); return `${d.getFullYear()}-${d.getM
 const todayOf  = kidId => kidsLogs(kidId).filter(l=>todayStr(l.ts)===todayStr(Date.now()) && l.type==='task');
 /* 今日全部记录（含手动加/扣分、兑换） */
 const todayAll = kidId => DB.logs.filter(l=>l.kidId===kidId && todayStr(l.ts)===todayStr(Date.now()));
-const doneToday = (kidId,taskId) => todayOf(kidId).some(l=>l.taskId===taskId && l.sign===todayStr(Date.now()));
+/* 今日某任务已打卡次数（允许多次打卡，用于展示"今天已打卡 ×N"） */
+const tickTimesToday = (kidId,taskId) => todayOf(kidId).filter(l=>l.taskId===taskId && l.sign===todayStr(Date.now())).length;
 
 /* 任务打卡记录需带 taskId + 当日 sign */
 function addTaskLog(kid,task){
@@ -660,7 +661,6 @@ function renderHome(v,left,right,title){
   state.kidId=kid.id; DB.activeKid=kid.id; save();
 
   const bal=balanceOf(kid.id);
-  const tLogs=todayOf(kid.id);            // 仅打卡（用于判断任务是否已完成）
   const tAll =todayAll(kid.id);           // 今日全部流水
   const todayUp  =tAll.filter(l=>l.delta>0).reduce((s,l)=>s+l.delta,0);
   const todayDown=Math.abs(tAll.filter(l=>l.delta<0).reduce((s,l)=>s+l.delta,0));
@@ -685,14 +685,14 @@ function renderHome(v,left,right,title){
     </div>` : '';
 
   const tasks=DB.tasks.map(t=>{
-    const done=doneToday(kid.id,t.id);
+    const times=tickTimesToday(kid.id,t.id);
     return `<div class="task-item">
       <div class="t-ic">${esc(t.emoji||'✅')}</div>
       <div class="task-body">
         <div class="task-name">${esc(t.name)}</div>
-        <div class="task-sub"><span style="color:var(--up);font-weight:800">+${fmt(t.points)}</span> 积分${done?'<span class="pill">今天已打卡</span>':''}</div>
+        <div class="task-sub"><span style="color:var(--up);font-weight:800">+${fmt(t.points)}</span> 积分${times>0?`<span class="pill">今天已打卡 ×${times}</span>`:''}</div>
       </div>
-      <button class="tick ${done?'done':''}" onclick="tickTask('${kid.id}','${t.id}')">${done?'已完成':'打卡'}</button>
+      <button class="tick" onclick="tickTask('${kid.id}','${t.id}')">打卡</button>
     </div>`;
   }).join('');
 
@@ -735,9 +735,9 @@ function switchKid(id){ state.kidId=id; DB.activeKid=id; save(); render(); }
 function tickTask(kidId,taskId){
   const k=kidById(kidId), t=DB.tasks.find(x=>x.id===taskId);
   if(!k||!t) return;
-  if(doneToday(kidId,taskId)){ toast('今天已经打过卡啦'); return; }
   addTaskLog(k,t);
-  toast(`${k.name} 打卡成功，+${fmt(t.points)} 分 🎉`);
+  const times=tickTimesToday(kidId,taskId);
+  toast(`${k.name} 打卡成功，+${fmt(t.points)} 分 🎉${times>1?`（今天第 ${times} 次）`:''}`);
   rerenderKeepScroll();
 }
 
@@ -1275,7 +1275,7 @@ function openTaskForm(id){
   let emoji=t?t.emoji:'✅';
   openSheet(`
     <h3>${t?'编辑任务':'新建日常任务'}</h3>
-    <div class="sub">打卡一次，自动加分</div>
+    <div class="sub">每打卡一次加一次分，可反复打卡（如背多个单元）</div>
     <div class="field">
       <label>图标</label>
       <div class="chips" id="emChips">
